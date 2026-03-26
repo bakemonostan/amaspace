@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --color-navy: #0c2340;
+  --color-orange: #e8620a;
+  --color-white: #ffffff;
+  --color-off-white: #f7f8fa;
+  --color-text: #1a2535;
+  --color-text-muted: #5a6a7a;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  color: var(--color-text);
+  background: var(--color-white);
+}
+
+.container-site {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
