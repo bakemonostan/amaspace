@@ -5,7 +5,9 @@ const productFields = `
   productCode,
   shortDescription,
   featured,
-  "image": images[0].asset->url,
+  "image": coalesce(productImage.asset->url, productImages[0].asset->url),
+  "productImage": productImage.asset->url,
+  "productImages": productImages[].asset->url,
   "category": category->{
     title,
     "slug": slug.current,
@@ -25,6 +27,22 @@ export const allProductsQuery = `
 export const productsByCategoryQuery = `
   *[_type == "product" && category->slug.current == $categorySlug] | order(title asc) {
     ${productFields}
+  }
+`;
+
+export const productBySlugQuery = `
+  *[_type == "product" && slug.current == $productSlug && category->slug.current == $categorySlug][0] {
+    _id,
+    title,
+    "slug": slug.current,
+    productCode,
+    shortDescription,
+    fullDescription,
+    specifications,
+    datasheetUrl,
+    "productImage": productImage.asset->url,
+    "productImages": productImages[].asset->url,
+    "category": category->{ title, "slug": slug.current, icon, color }
   }
 `;
 

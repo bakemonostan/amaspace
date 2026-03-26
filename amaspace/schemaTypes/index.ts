@@ -61,7 +61,18 @@ const product = defineType({
     }),
     defineField({name: 'shortDescription', type: 'text', rows: 3}),
     defineField({name: 'fullDescription', type: 'array', of: [{type: 'block'}]}),
-    defineField({name: 'images', type: 'array', of: [{type: 'image', options: {hotspot: true}}]}),
+    defineField({
+      name: 'productImage',
+      title: 'Product Image (Main)',
+      type: 'image',
+      options: {hotspot: true},
+    }),
+    defineField({
+      name: 'productImages',
+      title: 'Product Images (Gallery)',
+      type: 'array',
+      of: [{type: 'image', options: {hotspot: true}}],
+    }),
     defineField({
       name: 'specifications',
       type: 'array',

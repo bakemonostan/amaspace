@@ -21,7 +21,18 @@ export default defineType({
     defineField({ name: "specialization", type: "reference", to: [{ type: "specialization" }] }),
     defineField({ name: "shortDescription", type: "text", rows: 3, validation: (r) => r.required() }),
     defineField({ name: "fullDescription", type: "array", of: [{ type: "block" }] }),
-    defineField({ name: "images", type: "array", of: [{ type: "image", options: { hotspot: true } }] }),
+    defineField({
+      name: "productImage",
+      title: "Product Image (Main)",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "productImages",
+      title: "Product Images (Gallery)",
+      type: "array",
+      of: [{ type: "image", options: { hotspot: true } }],
+    }),
     defineField({
       name: "specifications",
       type: "array",
