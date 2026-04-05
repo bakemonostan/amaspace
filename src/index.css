@@ -23,3 +23,24 @@ body {
   margin: 0 auto;
   padding: 0 24px;
 }
+
+@keyframes mobile-nav-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-mobile-nav-in {
+  animation: mobile-nav-in 0.22s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-mobile-nav-in {
+    animation: none;
+  }
+}

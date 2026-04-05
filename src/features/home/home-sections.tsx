@@ -56,7 +56,7 @@ export function HeroSection() {
             </Link>
           </div>
         </div>
-        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+        <div className="relative mx-auto w-full max-w-md pb-12 lg:max-w-none lg:pb-0">
           <div className="overflow-hidden rounded-3xl shadow-card">
             <img
               src={heroImg}
@@ -262,7 +262,7 @@ export function SpecializedSolutionsSection() {
             })}
           </ul>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-card">
             <img src={specImgA} alt="Commercial construction and building envelope work" className="aspect-[3/4] w-full object-cover" width={400} height={533} />
           </div>
@@ -361,9 +361,11 @@ export function TrustedBySection() {
 
 export function OrangeCtaSection() {
   return (
-    <section className="bg-orange py-16 text-center text-white">
+    <section className="bg-orange py-12 text-center text-white sm:py-16">
       <div className="container-site max-w-3xl">
-        <h2 className="font-heading text-3xl font-bold md:text-4xl">Ready to elevate your building&apos;s performance?</h2>
+        <h2 className="text-balance font-heading text-2xl font-bold sm:text-3xl md:text-4xl">
+          Ready to elevate your building&apos;s performance?
+        </h2>
         <p className="mt-4 text-base text-white/90">
           Contact our engineering team to discuss your requirements and receive a structured consultation aligned with
           your programme and budget.
