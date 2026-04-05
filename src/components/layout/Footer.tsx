@@ -27,7 +27,7 @@ const serviceLinks = [
 export function Footer() {
   return (
     <footer className="bg-navy text-white">
-      <div className="container-site py-14">
+      <div className="container-site pb-14 pt-20 md:pb-16 md:pt-24">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           <div>
             <div className="flex items-center gap-2.5">
