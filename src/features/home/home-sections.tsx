@@ -1,0 +1,380 @@
+import { Link } from "@tanstack/react-router";
+import {
+  ArrowRight,
+  Building2,
+  Check,
+  Droplets,
+  Flame,
+  ShieldCheck,
+  Wind,
+  Wrench,
+  Zap,
+} from "lucide-react";
+import { useState } from "react";
+
+const heroImg =
+  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80";
+const specImgA =
+  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80";
+const specImgB =
+  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80";
+const projectImgs = [
+  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
+  "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+] as const;
+
+export function HeroSection() {
+  return (
+    <section className="bg-[#f4f7fa] pb-16 pt-12 md:pb-20 md:pt-16">
+      <div className="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <p className="inline-flex items-center gap-2 rounded-pill border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-navy">
+            <span className="h-1.5 w-1.5 rounded-full bg-blue" aria-hidden />
+            Engineering excellence
+          </p>
+          <h1 className="mt-5 font-heading text-4xl font-extrabold leading-tight text-navy md:text-5xl">
+            Building services engineered for <span className="text-orange">reliability.</span>
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+            Amaspace is a fast-growing Nigerian building services firm—delivering mechanical, electrical, plumbing, fire
+            safety, and security solutions with cutting-edge technology, strict quality standards, and a proven track
+            record on commercial and industrial projects.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              to="/request-quote"
+              className="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white hover:bg-orange-hover"
+            >
+              Request a Quote
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-navy hover:border-navy"
+            >
+              Explore Services
+            </Link>
+          </div>
+        </div>
+        <div className="relative mx-auto w-full max-w-md lg:max-w-none">
+          <div className="overflow-hidden rounded-3xl shadow-card">
+            <img
+              src={heroImg}
+              alt="Construction site with workers and building infrastructure"
+              className="aspect-[4/5] w-full object-cover md:aspect-[3/4]"
+              width={720}
+              height={900}
+            />
+          </div>
+          <div className="absolute -bottom-4 left-4 flex max-w-[220px] items-start gap-3 rounded-xl border border-slate-100 bg-white p-4 shadow-card md:left-6">
+            <div
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-blue text-[10px] font-bold text-blue"
+              aria-hidden
+            >
+              ISO
+            </div>
+            <div>
+              <p className="font-heading text-sm font-bold text-navy">ISO 9001</p>
+              <p className="text-xs text-slate-600">Quality management system compliant.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function TrustStrip() {
+  const items = [
+    {
+      icon: ShieldCheck,
+      title: "Unwavering credibility",
+      body: "Trust, transparent processes, and consistent delivery aligned with ISO 9001 and rigorous internal quality standards.",
+    },
+    {
+      icon: Wrench,
+      title: "Services-led approach",
+      body: "We design, procure, install, test, commission, and maintain systems tailored to each facility—not just supply.",
+    },
+    {
+      icon: Building2,
+      title: "Multi-sector expertise",
+      body: "Construction, energy, data & telecoms, government, manufacturing, and natural resources—backed by multidisciplinary teams.",
+    },
+  ] as const;
+
+  return (
+    <section className="bg-navy py-14 text-white">
+      <div className="container-site grid gap-10 md:grid-cols-3 md:gap-8">
+        {items.map(({ icon: Icon, title, body }) => (
+          <div key={title} className="text-center md:text-left">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-orange/15 text-orange md:mx-0">
+              <Icon className="h-6 w-6" strokeWidth={1.75} />
+            </div>
+            <h2 className="mt-4 font-heading text-lg font-bold">{title}</h2>
+            <p className="mt-2 text-sm leading-relaxed text-white/75">{body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+const capabilities = [
+  {
+    icon: Wind,
+    title: "HVAC systems",
+    desc: "Design, procurement, installation, troubleshooting, and maintenance for commercial and residential buildings.",
+    bullets: ["Packaged & VRF systems", "Kitchen hood & make-up air", "Smoke extract & HVAC controls"],
+  },
+  {
+    icon: Zap,
+    title: "Electrical engineering",
+    desc: "Safe, efficient power from the grid to the final outlet—MV/LV distribution, metering, backup, and smart lighting.",
+    bullets: ["MV/LV distribution & substations", "Backup & generation", "Smart LED & street lighting"],
+  },
+  {
+    icon: Droplets,
+    title: "Plumbing & piping",
+    desc: "Water, wastewater, conveyance, and public health engineering for complex commercial infrastructure.",
+    bullets: ["Treatment & conveyance", "Drainage & sewage", "Industrial piping"],
+  },
+] as const;
+
+export function CoreCapabilitiesSection() {
+  return (
+    <section className="bg-[#f4f7fa] py-16 md:py-20">
+      <div className="container-site">
+        <div className="mx-auto max-w-2xl text-center">
+          <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">Our core capabilities</h2>
+          <p className="mt-3 text-slate-600">
+            Integrated building services designed for optimal performance, safety, and longevity.
+          </p>
+        </div>
+        <div className="mt-12 grid gap-8 md:grid-cols-3">
+          {capabilities.map(({ icon: Icon, title, desc, bullets }) => (
+            <div key={title} className="rounded-2xl border border-slate-100 bg-white p-8 shadow-card">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-navy">
+                <Icon className="h-6 w-6" strokeWidth={1.5} />
+              </div>
+              <h3 className="mt-5 font-heading text-lg font-bold text-navy">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">{desc}</p>
+              <ul className="mt-5 space-y-2.5">
+                {bullets.map((b) => (
+                  <li key={b} className="flex gap-2 text-sm text-slate-700">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-blue" aria-hidden />
+                    {b}
+                  </li>
+                ))}
+              </ul>
+              <Link to="/services" className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue hover:underline">
+                Learn more
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          ))}
+        </div>
+        <div className="mt-12 flex justify-center">
+          <Link
+            to="/services"
+            className="inline-flex items-center rounded-lg border border-slate-300 bg-white px-8 py-3 text-sm font-semibold text-navy hover:border-navy"
+          >
+            View all services
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const specItems = [
+  {
+    id: "fire" as const,
+    title: "Fire safety systems",
+    desc: "Fire alarm & smoke detection, VESDA, foam, water mist, gas suppression, sprinklers, hydrants, hose reels, and portable extinguishers—designed, installed, tested, and maintained.",
+    cta: "Explore fire safety expertise",
+    to: "/products",
+    activeBorder: "border-fire",
+    ctaClass: "text-fire",
+    showFlame: true,
+  },
+  {
+    id: "bms" as const,
+    title: "Building management systems (BMS)",
+    desc: "Extra-low voltage integration including BMS, access control, CCTV, fire detection, and UPS—compliant, dependable, and fully coordinated.",
+    cta: "View specializations",
+    to: "/specializations",
+    activeBorder: "border-navy",
+    ctaClass: "text-blue",
+    showFlame: false,
+  },
+] as const;
+
+export function SpecializedSolutionsSection() {
+  const [active, setActive] = useState<(typeof specItems)[number]["id"]>("fire");
+
+  return (
+    <section className="bg-white py-16 md:py-20">
+      <div className="container-site grid gap-12 lg:grid-cols-2 lg:items-start">
+        <div>
+          <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">Specialized solutions</h2>
+          <p className="mt-4 max-w-lg text-slate-600">
+            Critical infrastructure demands specialists. From fire life safety to intelligent building controls, we align
+            systems with codes, operations, and your long-term asset strategy.
+          </p>
+          <ul className="mt-10 space-y-0">
+            {specItems.map((item) => {
+              const isActive = active === item.id;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => setActive(item.id)}
+                    className={`w-full border-l-4 py-5 pl-5 pr-3 text-left transition ${
+                      isActive
+                        ? `${item.activeBorder} bg-slate-50`
+                        : "border-slate-200 bg-transparent hover:bg-slate-50/80"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      {item.showFlame ? (
+                        <Flame className={`mt-0.5 h-5 w-5 shrink-0 ${isActive ? "text-fire" : "text-slate-400"}`} />
+                      ) : (
+                        <span className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
+                      )}
+                      <div>
+                        <p className="font-heading text-base font-bold text-navy">{item.title}</p>
+                        <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                        {isActive ? (
+                          <Link
+                            to={item.to}
+                            className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
+                          >
+                            {item.cta}
+                            <ArrowRight className="h-4 w-4" />
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-card">
+            <img src={specImgA} alt="Commercial construction and building envelope work" className="aspect-[3/4] w-full object-cover" width={400} height={533} />
+          </div>
+          <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-card">
+            <img src={specImgB} alt="Engineer reviewing technical drawings and plans" className="aspect-[3/4] w-full object-cover" width={400} height={533} />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const featuredProjects = [
+  {
+    title: "Cornerstone Towers",
+    sub: "MEP services • Victoria Island, Lagos",
+    img: projectImgs[0],
+  },
+  {
+    title: "Gateway Mall Abuja",
+    sub: "Fire safety, security & external lighting",
+    img: projectImgs[1],
+  },
+  {
+    title: "Blu Atlantic Hotel",
+    sub: "MEP installation • Lagos",
+    img: projectImgs[2],
+  },
+] as const;
+
+export function FeaturedProjectsSection() {
+  return (
+    <section className="bg-[#f4f7fa] py-16 md:py-20">
+      <div className="container-site">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">Featured projects</h2>
+            <p className="mt-3 max-w-xl text-slate-600">
+              A selection of completed and ongoing engineering and installation work drawn from our corporate portfolio.
+            </p>
+          </div>
+          <Link
+            to="/projects"
+            className="inline-flex shrink-0 items-center gap-2 self-start rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-navy hover:border-navy md:self-auto"
+          >
+            View full portfolio
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="mt-12 grid gap-8 md:grid-cols-3">
+          {featuredProjects.map((p) => (
+            <article key={p.title} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card">
+              <img
+                src={p.img}
+                alt={p.title}
+                className="aspect-[4/3] w-full object-cover"
+                width={640}
+                height={480}
+              />
+              <div className="p-5">
+                <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
+                <p className="mt-1 text-sm text-slate-600">{p.sub}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const clientMarks = ["BuildCo", "Structura", "Apex Dev", "Metro"] as const;
+
+export function TrustedBySection() {
+  return (
+    <section className="bg-white py-14">
+      <div className="container-site">
+        <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+          Trusted by industry leaders
+        </p>
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-10 md:gap-16">
+          {clientMarks.map((name) => (
+            <div
+              key={name}
+              className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400"
+            >
+              <span className="h-8 w-8 rounded border border-slate-200 bg-slate-50" aria-hidden />
+              {name}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function OrangeCtaSection() {
+  return (
+    <section className="bg-orange py-16 text-center text-white">
+      <div className="container-site max-w-3xl">
+        <h2 className="font-heading text-3xl font-bold md:text-4xl">Ready to elevate your building&apos;s performance?</h2>
+        <p className="mt-4 text-base text-white/90">
+          Contact our engineering team to discuss your requirements and receive a structured consultation aligned with
+          your programme and budget.
+        </p>
+        <Link
+          to="/request-quote"
+          className="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-sm font-semibold text-orange hover:bg-white/95"
+        >
+          Request a quote now
+        </Link>
+      </div>
+    </section>
+  );
+}

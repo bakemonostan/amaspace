@@ -1,36 +1,142 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
+import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import { useState } from "react";
 
-const links = [
-  { to: "/", label: "Home" },
-  { to: "/about", label: "About" },
-  { to: "/services", label: "Services" },
-  { to: "/specializations", label: "Specializations" },
-  { to: "/products", label: "Products" },
-  { to: "/projects", label: "Projects" },
-  { to: "/contact", label: "Contact" },
+const specializationLinks = [
+  { to: "/products", label: "Fire Safety & Detection" },
+  { to: "/specializations", label: "Building Management Systems (BMS)" },
+  { to: "/specializations", label: "Security, CCTV & Access Control" },
 ] as const;
 
+function navLinkClass(active: boolean) {
+  return active ? "text-blue font-medium" : "text-slate-600 hover:text-navy";
+}
+
 export function Navbar() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSpecOpen, setMobileSpecOpen] = useState(false);
+
+  const isHome = pathname === "/";
+  const isServices = pathname === "/services" || pathname.startsWith("/services/");
+  const isPortfolio = pathname === "/projects" || pathname.startsWith("/projects/");
+  const isSpecializations =
+    pathname === "/specializations" ||
+    pathname.startsWith("/specializations/") ||
+    pathname === "/products" ||
+    pathname.startsWith("/products/");
+
   return (
-    <header className="sticky top-0 z-50 border-b bg-white">
+    <header className="sticky top-0 z-50 border-b border-slate-100 bg-white shadow-nav">
       <div className="container-site flex h-[72px] items-center justify-between gap-4">
-        <Link to="/" className="font-heading text-lg font-bold text-navy">
-          AMASPACE
+        <Link to="/" className="flex items-center gap-2.5" onClick={() => setMobileOpen(false)}>
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-navy font-heading text-lg font-bold text-white">
+            A
+          </span>
+          <span className="font-heading text-lg font-bold text-navy">Amaspace</span>
         </Link>
-        <nav className="hidden items-center gap-4 md:flex">
-          {links.map((link) => (
-            <Link key={link.to} to={link.to} className="text-sm text-slate-700 hover:text-orange">
-              {link.label}
-            </Link>
-          ))}
+
+        <nav className="hidden items-center gap-8 md:flex">
+          <Link to="/" className={`text-sm ${navLinkClass(isHome)}`}>
+            Home
+          </Link>
+          <Link to="/services" className={`text-sm ${navLinkClass(isServices)}`}>
+            Services
+          </Link>
+          <div className="relative group">
+            <button
+              type="button"
+              className={`flex items-center gap-1 text-sm ${navLinkClass(isSpecializations)}`}
+              aria-expanded={undefined}
+              aria-haspopup="true"
+            >
+              Specializations
+              <ChevronDown className="h-4 w-4 opacity-70" aria-hidden />
+            </button>
+            <div className="pointer-events-none absolute left-1/2 top-full z-50 min-w-[240px] -translate-x-1/2 pt-2 opacity-0 transition-all group-hover:pointer-events-auto group-hover:opacity-100">
+              <div className="rounded-lg border border-slate-100 bg-white py-2 shadow-card">
+                {specializationLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-light hover:text-navy"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+          <Link to="/projects" className={`text-sm ${navLinkClass(isPortfolio)}`}>
+            Portfolio
+          </Link>
         </nav>
-        <Link
-          to="/request-quote"
-          className="rounded-md bg-orange px-4 py-2 text-sm font-semibold text-white hover:bg-orange-hover"
+
+        <div className="hidden md:block">
+          <Link
+            to="/request-quote"
+            className="inline-flex items-center gap-2 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover"
+          >
+            Request a Quote
+            <ArrowRight className="h-4 w-4" aria-hidden />
+          </Link>
+        </div>
+
+        <button
+          type="button"
+          className="inline-flex items-center justify-center rounded-md p-2 text-navy md:hidden"
+          aria-label={mobileOpen ? "Close menu" : "Open menu"}
+          onClick={() => setMobileOpen((o) => !o)}
         >
-          Request a Quote
-        </Link>
+          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
+
+      {mobileOpen ? (
+        <div className="border-t border-slate-100 bg-white px-4 py-4 md:hidden">
+          <div className="flex flex-col gap-1">
+            <Link to="/" className="py-2 text-sm font-medium text-navy" onClick={() => setMobileOpen(false)}>
+              Home
+            </Link>
+            <Link to="/services" className="py-2 text-sm text-slate-700" onClick={() => setMobileOpen(false)}>
+              Services
+            </Link>
+            <button
+              type="button"
+              className="flex w-full items-center justify-between py-2 text-left text-sm text-slate-700"
+              onClick={() => setMobileSpecOpen((s) => !s)}
+            >
+              Specializations
+              <ChevronDown className={`h-4 w-4 transition ${mobileSpecOpen ? "rotate-180" : ""}`} />
+            </button>
+            {mobileSpecOpen ? (
+              <div className="ml-2 border-l border-slate-200 pl-3">
+                {specializationLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className="block py-2 text-sm text-slate-600"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+            <Link to="/projects" className="py-2 text-sm text-slate-700" onClick={() => setMobileOpen(false)}>
+              Portfolio
+            </Link>
+            <Link
+              to="/request-quote"
+              className="mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-orange py-3 text-sm font-semibold text-white"
+              onClick={() => setMobileOpen(false)}
+            >
+              Request a Quote
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }
