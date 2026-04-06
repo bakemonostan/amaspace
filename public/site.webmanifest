@@ -1,0 +1,21 @@
+{
+  "name": "Amaspace Building Service Company",
+  "short_name": "Amaspace",
+  "icons": [
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/amaspace-logo-icon.jpeg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ],
+  "theme_color": "#0C2340",
+  "background_color": "#ffffff",
+  "display": "standalone"
+}

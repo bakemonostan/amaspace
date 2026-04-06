@@ -67,6 +67,7 @@ export function getOrganizationJsonLd(): Record<string, unknown> {
   };
   if (url) {
     org.url = url;
+    org.logo = absoluteUrl("/amaspace-logo-icon.jpeg");
   }
   return org;
 }

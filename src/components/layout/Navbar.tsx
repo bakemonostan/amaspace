@@ -2,6 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const CONTACT_BAR_PX = 40;
 
@@ -50,9 +51,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-slate-100 bg-white shadow-nav">
       <div className="container-site flex h-[72px] items-center justify-between gap-4">
         <Link to="/" className="flex items-center gap-2.5" onClick={closeAll}>
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-navy font-heading text-lg font-bold text-white">
-            A
-          </span>
+          <BrandLogo variant="mark" />
           <span className="font-heading text-lg font-bold text-navy">Amaspace</span>
         </Link>
 

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -39,9 +40,7 @@ export function Footer() {
         <div className='grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8'>
           <div>
             <div className='flex items-center gap-2.5'>
-              <span className='flex h-9 w-9 items-center justify-center rounded-md bg-white/10 font-heading text-lg font-bold text-white'>
-                A
-              </span>
+              <BrandLogo variant="mark" invertOnDark />
               <span className='font-heading text-lg font-bold'>Amaspace</span>
             </div>
             <p className='mt-4 max-w-xs text-sm leading-relaxed text-white/70'>

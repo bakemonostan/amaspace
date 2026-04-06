@@ -1,4 +1,11 @@
-import { absoluteUrl, DEFAULT_DESCRIPTION, DEFAULT_KEYWORDS, SITE_LEGAL_NAME, SITE_LOCALE, SITE_NAME } from "@/lib/seo/config";
+import {
+  absoluteUrl,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_KEYWORDS,
+  SITE_LEGAL_NAME,
+  SITE_LOCALE,
+  SITE_NAME,
+} from "@/lib/seo/config";
 
 export type SeoMetaInput = {
   /** Shown in <title> before the site suffix (except when isHome). */
@@ -70,19 +77,22 @@ export function applySeoMeta(input: SeoMetaInput & { pathname: string }): void {
   if (url.startsWith("http")) {
     ensureMeta("property", "og:url", url);
   }
-  if (input.ogImage?.startsWith("http")) {
-    ensureMeta("property", "og:image", input.ogImage);
-    ensureMeta("property", "og:image:alt", fullTitle);
+
+  const resolvedOg =
+    input.ogImage?.startsWith("http") ? input.ogImage : absoluteUrl("/amaspace-logo-full.jpeg");
+
+  if (resolvedOg.startsWith("http")) {
+    ensureMeta("property", "og:image", resolvedOg);
+    ensureMeta("property", "og:image:alt", `${SITE_NAME} — ${SITE_LEGAL_NAME}`);
+    ensureMeta("name", "twitter:card", "summary_large_image");
+    ensureMeta("name", "twitter:image", resolvedOg);
   } else {
     removeMeta("property", "og:image");
     removeMeta("property", "og:image:alt");
     removeMeta("name", "twitter:image");
+    ensureMeta("name", "twitter:card", "summary");
   }
 
-  ensureMeta("name", "twitter:card", input.ogImage?.startsWith("http") ? "summary_large_image" : "summary");
   ensureMeta("name", "twitter:title", fullTitle);
   ensureMeta("name", "twitter:description", description);
-  if (input.ogImage?.startsWith("http")) {
-    ensureMeta("name", "twitter:image", input.ogImage);
-  }
 }

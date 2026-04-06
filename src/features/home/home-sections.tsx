@@ -13,6 +13,37 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
+type TrustedPartner = {
+  name: string;
+  abbr: string;
+  /** Optional: add `/public/trusted-partners/yourfile.png` and set path e.g. `/trusted-partners/acme.png` */
+  logo?: string;
+};
+
+function PartnerMark({ abbr, logo }: Pick<TrustedPartner, "abbr" | "logo">) {
+  const [imgOk, setImgOk] = useState(Boolean(logo));
+
+  if (logo && imgOk) {
+    return (
+      <img
+        src={logo}
+        alt=""
+        className="h-11 w-auto max-w-[120px] object-contain opacity-90 grayscale transition hover:grayscale-0"
+        onError={() => setImgOk(false)}
+      />
+    );
+  }
+
+  return (
+    <span
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-gradient-to-br from-slate-50 to-slate-100 font-heading text-[11px] font-bold tracking-tight text-navy shadow-sm"
+      aria-hidden
+    >
+      {abbr}
+    </span>
+  );
+}
+
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
@@ -238,8 +269,8 @@ const specItems = [
     id: "bms" as const,
     title: "Building management systems (BMS)",
     desc: "Extra-low voltage integration including BMS, access control, CCTV, fire detection, and UPS—compliant, dependable, and fully coordinated.",
-    cta: "View specializations",
-    to: "/specializations",
+    cta: "View our services",
+    to: "/services" as const,
     activeBorder: "border-navy",
     ctaClass: "text-blue",
     showFlame: false,
@@ -388,7 +419,12 @@ export function FeaturedProjectsSection() {
   );
 }
 
-const clientMarks = ["BuildCo", "Structura", "Apex Dev", "Metro"] as const;
+const trustedPartners: TrustedPartner[] = [
+  { name: "BuildCo", abbr: "BC" },
+  { name: "Structura", abbr: "ST" },
+  { name: "Apex Dev", abbr: "AD" },
+  { name: "Metro", abbr: "MT" },
+];
 
 export function TrustedBySection() {
   return (
@@ -397,14 +433,11 @@ export function TrustedBySection() {
         <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
           Trusted by industry leaders
         </p>
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-10 md:gap-16">
-          {clientMarks.map((name) => (
-            <div
-              key={name}
-              className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-slate-400"
-            >
-              <span className="h-8 w-8 rounded border border-slate-200 bg-slate-50" aria-hidden />
-              {name}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-12 gap-y-8 md:gap-x-16">
+          {trustedPartners.map(({ name, abbr, logo }) => (
+            <div key={name} className="flex items-center gap-3">
+              <PartnerMark abbr={abbr} logo={logo} />
+              <span className="text-sm font-bold uppercase tracking-wide text-slate-600">{name}</span>
             </div>
           ))}
         </div>
