@@ -131,7 +131,7 @@ export function ServicesScreen() {
             </div>
             <Link
               to="/products"
-              className="mt-5 inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-orange px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover md:mt-0 md:w-auto"
+              className="cta-glow-primary mt-5 inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-orange px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover md:mt-0 md:w-auto"
             >
               View products
               <ArrowRight className="h-4 w-4" aria-hidden />

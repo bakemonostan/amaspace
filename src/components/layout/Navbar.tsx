@@ -69,7 +69,7 @@ export function Navbar() {
         <div className="hidden md:block">
           <Link
             to="/request-quote"
-            className="inline-flex items-center gap-2 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover"
+            className="cta-glow-primary inline-flex items-center gap-2 rounded-lg bg-orange px-4 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover"
           >
             Request a Quote
             <ArrowRight className="h-4 w-4" aria-hidden />
@@ -158,7 +158,7 @@ export function Navbar() {
 
                   <Link
                     to="/request-quote"
-                    className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-orange py-3 text-sm font-semibold text-white"
+                    className="cta-glow-primary mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-orange py-3 text-sm font-semibold text-white hover:bg-orange-hover"
                     onClick={closeAll}
                   >
                     Request a Quote

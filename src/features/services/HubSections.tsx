@@ -107,7 +107,7 @@ export function ServicesMepfContractingSection() {
             </div>
             <Link
               to="/request-quote"
-              className="relative mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-sm font-semibold text-white hover:bg-orange-hover sm:w-auto"
+              className="cta-glow-primary relative mt-8 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-6 py-3.5 text-sm font-semibold text-white hover:bg-orange-hover sm:w-auto"
             >
               Start your project
               <ArrowRight className="h-4 w-4" aria-hidden />

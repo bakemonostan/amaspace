@@ -29,6 +29,46 @@ body {
   padding: 0 24px;
 }
 
+/* Primary orange CTAs: soft outer glow + light press (no extra packages) */
+@layer utilities {
+  .cta-glow-primary {
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.15s ease,
+      background-color 0.2s ease;
+    box-shadow:
+      0 4px 18px -2px rgba(232, 98, 10, 0.4),
+      0 0 0 1px rgba(232, 98, 10, 0.12);
+  }
+  .cta-glow-primary:hover {
+    box-shadow:
+      0 6px 26px -2px rgba(232, 98, 10, 0.48),
+      0 0 0 1px rgba(232, 98, 10, 0.16);
+  }
+  .cta-glow-primary:active {
+    transform: scale(0.98);
+  }
+
+  /* White / on-brand CTA sitting on orange band */
+  .cta-glow-on-orange {
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.15s ease,
+      background-color 0.2s ease;
+    box-shadow:
+      0 4px 20px rgba(12, 35, 64, 0.18),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  }
+  .cta-glow-on-orange:hover {
+    box-shadow:
+      0 6px 28px rgba(12, 35, 64, 0.22),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+  }
+  .cta-glow-on-orange:active {
+    transform: scale(0.98);
+  }
+}
+
 @keyframes mobile-nav-in {
   from {
     opacity: 0;

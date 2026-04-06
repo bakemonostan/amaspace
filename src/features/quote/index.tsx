@@ -227,7 +227,7 @@ export function RequestQuoteScreen() {
 
                     <button
                       type="submit"
-                      className="flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-5 py-3.5 text-sm font-semibold text-white transition hover:bg-orange-hover"
+                      className="cta-glow-primary flex w-full items-center justify-center gap-2 rounded-lg bg-orange px-5 py-3.5 text-sm font-semibold text-white hover:bg-orange-hover"
                     >
                       Submit request
                       <Send className="h-4 w-4" aria-hidden />

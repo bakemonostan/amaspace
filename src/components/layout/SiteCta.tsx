@@ -13,7 +13,7 @@ export function SiteCta() {
         </p>
         <Link
           to="/request-quote"
-          className="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-sm font-semibold text-orange hover:bg-white/95"
+          className="cta-glow-on-orange mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-sm font-semibold text-orange hover:bg-white/95"
         >
           Request a quote now
         </Link>

@@ -81,7 +81,7 @@ export function HeroSection() {
           <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/request-quote"
-              className="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white hover:bg-orange-hover"
+              className="cta-glow-primary inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white hover:bg-orange-hover"
             >
               Request a Quote
             </Link>

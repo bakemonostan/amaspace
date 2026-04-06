@@ -403,7 +403,7 @@ function ProductDetailBody({ product, categorySlug, productSlug }: BodyProps) {
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                     <Link
                       to="/request-quote"
-                      className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange/25 transition hover:bg-orange-hover sm:flex-none"
+                      className="cta-glow-primary inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange px-6 py-3.5 text-sm font-semibold text-white hover:bg-orange-hover sm:flex-none"
                     >
                       Request a quote
                       <ArrowRight className="h-4 w-4" aria-hidden />
@@ -566,7 +566,7 @@ function ProductDetailBody({ product, categorySlug, productSlug }: BodyProps) {
               </p>
               <Link
                 to="/request-quote"
-                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-orange px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover"
+                className="cta-glow-primary mt-6 inline-flex items-center gap-2 rounded-xl bg-orange px-5 py-2.5 text-sm font-semibold text-white hover:bg-orange-hover"
               >
                 Request datasheet pack
                 <ArrowRight className="h-4 w-4" aria-hidden />
@@ -725,7 +725,7 @@ function ProductDetailBody({ product, categorySlug, productSlug }: BodyProps) {
               <div className="flex w-full shrink-0 flex-col gap-3 sm:flex-row md:w-auto">
                 <Link
                   to="/request-quote"
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-orange/30 transition hover:bg-orange-hover"
+                  className="cta-glow-primary inline-flex items-center justify-center gap-2 rounded-xl bg-orange px-7 py-3.5 text-sm font-semibold text-white hover:bg-orange-hover"
                 >
                   Consult our specialists
                 </Link>

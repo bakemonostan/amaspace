@@ -1,8 +1,9 @@
-import { Outlet, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { OrganizationJsonLd } from "@/components/OrganizationJsonLd";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { PageTransition } from "@/components/layout/PageTransition";
 import { SiteCta } from "@/components/layout/SiteCta";
 import { TopContactBar } from "@/components/layout/TopContactBar";
 import { ErrorBoundary } from "@/components/ui/ErrorBoundary";
@@ -17,7 +18,7 @@ export function RootLayout() {
       <TopContactBar />
       <Navbar />
       <main>
-        <Outlet />
+        <PageTransition />
       </main>
       {!hideSiteCta ? <SiteCta /> : null}
       <Footer />

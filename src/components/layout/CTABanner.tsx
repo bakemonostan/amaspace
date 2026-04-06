@@ -8,7 +8,7 @@ export function CTABanner() {
         <p className="mt-2 text-white/80">Tell us your requirements and we will respond within 24 hours.</p>
         <Link
           to="/request-quote"
-          className="mt-6 inline-block rounded-md bg-orange px-6 py-3 font-semibold text-white hover:bg-orange-hover"
+          className="cta-glow-primary mt-6 inline-block rounded-md bg-orange px-6 py-3 font-semibold text-white hover:bg-orange-hover"
         >
           Request a Quote
         </Link>
