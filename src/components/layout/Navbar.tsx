@@ -1,6 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Menu, X } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const CONTACT_BAR_PX = 40;
@@ -12,32 +12,18 @@ function navLinkClass(active: boolean) {
 export function Navbar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileSpecOpen, setMobileSpecOpen] = useState(false);
-  const [desktopSpecOpen, setDesktopSpecOpen] = useState(false);
   const [mobileSheetTop, setMobileSheetTop] = useState("7rem");
 
   const mobileMenuBtnRef = useRef<HTMLButtonElement>(null);
-  const mobileSpecBtnRef = useRef<HTMLButtonElement>(null);
-  const desktopSpecBtnRef = useRef<HTMLButtonElement>(null);
-
-  useLayoutEffect(() => {
-    desktopSpecBtnRef.current?.setAttribute("aria-expanded", desktopSpecOpen ? "true" : "false");
-  }, [desktopSpecOpen]);
 
   useLayoutEffect(() => {
     mobileMenuBtnRef.current?.setAttribute("aria-expanded", mobileOpen ? "true" : "false");
   }, [mobileOpen]);
 
-  useLayoutEffect(() => {
-    mobileSpecBtnRef.current?.setAttribute("aria-expanded", mobileSpecOpen ? "true" : "false");
-  }, [mobileSpecOpen]);
-
   const isHome = pathname === "/";
   const isServices = pathname === "/services" || pathname.startsWith("/services/");
   const isProducts = pathname === "/products" || pathname.startsWith("/products/");
   const isPortfolio = pathname === "/projects" || pathname.startsWith("/projects/");
-  const isSpecializations =
-    pathname === "/specializations" || pathname.startsWith("/specializations/");
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -58,7 +44,6 @@ export function Navbar() {
 
   const closeAll = () => {
     setMobileOpen(false);
-    setMobileSpecOpen(false);
   };
 
   return (
@@ -75,72 +60,6 @@ export function Navbar() {
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/" className={`text-sm ${navLinkClass(isHome)}`}>Home</Link>
           <Link to="/services" className={`text-sm ${navLinkClass(isServices)}`}>Services</Link>
-
-          {/* Specializations dropdown */}
-          <div
-            className="relative"
-            onMouseEnter={() => setDesktopSpecOpen(true)}
-            onMouseLeave={() => setDesktopSpecOpen(false)}
-            onBlur={(e) => {
-              if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
-                setDesktopSpecOpen(false);
-              }
-            }}
-          >
-            <button
-              ref={desktopSpecBtnRef}
-              type="button"
-              className={`flex items-center gap-1 text-sm ${navLinkClass(isSpecializations)}`}
-              aria-haspopup="true"
-              onClick={() => setDesktopSpecOpen((o) => !o)}
-            >
-              Specializations
-              <motion.span
-                animate={{ rotate: desktopSpecOpen ? 180 : 0 }}
-                transition={{ duration: 0.2 }}
-                className="inline-flex"
-              >
-                <ChevronDown className="h-4 w-4 opacity-70" aria-hidden />
-              </motion.span>
-            </button>
-
-            <AnimatePresence>
-              {desktopSpecOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                  transition={{ duration: 0.18, ease: "easeOut" }}
-                  className="absolute left-1/2 top-full z-50 min-w-[260px] -translate-x-1/2 pt-2"
-                >
-                  <div className="rounded-xl border border-slate-100 bg-white py-2 shadow-card">
-                    <Link
-                      to="/services/$serviceSlug"
-                      params={{ serviceSlug: "fire-safety-systems" }}
-                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-light hover:text-navy"
-                      onClick={() => setDesktopSpecOpen(false)}
-                    >
-                      Fire Safety & Detection
-                    </Link>
-                    <Link
-                      to="/specializations"
-                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-light hover:text-navy"
-                      onClick={() => setDesktopSpecOpen(false)}
-                    >
-                      Building Management Systems (BMS)
-                    </Link>
-                    <Link
-                      to="/specializations"
-                      className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-blue-light hover:text-navy"
-                      onClick={() => setDesktopSpecOpen(false)}
-                    >
-                      Security, CCTV & Access Control
-                    </Link>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
           <Link to="/products" className={`text-sm ${navLinkClass(isProducts)}`}>Products</Link>
           <Link to="/projects" className={`text-sm ${navLinkClass(isPortfolio)}`}>Portfolio</Link>
@@ -209,59 +128,6 @@ export function Navbar() {
                 <div className="flex flex-col gap-1">
                   <Link to="/" className="py-2 text-sm font-medium text-navy" onClick={closeAll}>Home</Link>
                   <Link to="/services" className="py-2 text-sm text-slate-700" onClick={closeAll}>Services</Link>
-
-                  <button
-                    ref={mobileSpecBtnRef}
-                    type="button"
-                    className="flex w-full items-center justify-between py-2 text-left text-sm text-slate-700"
-                    onClick={() => setMobileSpecOpen((s) => !s)}
-                  >
-                    Specializations
-                    <motion.span
-                      animate={{ rotate: mobileSpecOpen ? 180 : 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="inline-flex"
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </motion.span>
-                  </button>
-
-                  <AnimatePresence>
-                    {mobileSpecOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="overflow-hidden"
-                      >
-                        <div className="ml-2 border-l border-slate-200 pl-3">
-                          <Link
-                            to="/services/$serviceSlug"
-                            params={{ serviceSlug: "fire-safety-systems" }}
-                            className="block py-2 text-sm text-slate-600"
-                            onClick={closeAll}
-                          >
-                            Fire Safety & Detection
-                          </Link>
-                          <Link
-                            to="/specializations"
-                            className="block py-2 text-sm text-slate-600"
-                            onClick={closeAll}
-                          >
-                            Building Management Systems (BMS)
-                          </Link>
-                          <Link
-                            to="/specializations"
-                            className="block py-2 text-sm text-slate-600"
-                            onClick={closeAll}
-                          >
-                            Security, CCTV & Access Control
-                          </Link>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
 
                   <Link to="/products" className="py-2 text-sm text-slate-700" onClick={closeAll}>Products</Link>
                   <Link to="/projects" className="py-2 text-sm text-slate-700" onClick={closeAll}>Portfolio</Link>
