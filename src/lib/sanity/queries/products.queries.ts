@@ -60,6 +60,24 @@ export const allProductCategoriesQuery = `
   }
 `;
 
+/** Major categories with aggregated product counts (products whose subcategory’s parent is this major). */
+export const majorCategoriesWithProductCountQuery = `
+  *[_type == "productCategory" && categoryType == "major" && isActive == true] | order(order asc, title asc) {
+    _id,
+    title,
+    "slug": slug.current,
+    description,
+    icon,
+    color,
+    "productCount": count(*[
+      _type == "product" &&
+      defined(category) &&
+      category->categoryType == "sub" &&
+      category->parentCategory._ref == ^._id
+    ])
+  }
+`;
+
 export const groupedProductCategoriesQuery = `
   *[_type == "productCategory" && categoryType == "major" && isActive == true] | order(order asc, title asc) {
     _id,

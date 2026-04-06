@@ -20,8 +20,8 @@ export const portfolioProjects: PortfolioProject[] = [
       "Supply and installation of MEP services for a premium office development on Victoria Island, Lagos—coordinated mechanical, electrical, and plumbing delivery.",
     tags: ["MEP", "High-rise", "Lagos"],
     imageUrl:
-      "https://images.unsplash.com/photo-1486406146926-c627a92ad1bb?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Modern high-rise office towers",
+      "https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?auto=format&fit=crop&w=900&q=80",
+    imageAlt: "City skyline and high-rise buildings",
     status: "completed",
   },
   {
@@ -108,8 +108,8 @@ export const portfolioProjects: PortfolioProject[] = [
       "Extra-low-voltage and life-safety package: CCTV, access control, parking barriers, and fire safety systems for a multi-unit residential development.",
     tags: ["ELV", "Fire safety", "Access"],
     imageUrl:
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c0b?auto=format&fit=crop&w=900&q=80",
-    imageAlt: "Residential apartment building facade",
+      "https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=900&q=80",
+    imageAlt: "Modern residential apartment building exterior",
     status: "ongoing",
   },
   {

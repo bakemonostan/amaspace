@@ -1,13 +1,38 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search } from "lucide-react";
+import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import {
+  Bell,
+  Box,
+  Cpu,
+  Cylinder,
+  Droplets,
+  Flame,
+  Package,
+  Radio,
+  Search,
+  Shield,
+  Zap,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { Screen } from "@/components/ui/Screen";
-import { sanityClient } from "@/lib/sanity/client";
-import { urlFor } from "@/lib/sanity/image";
 import { BasicPage } from "@/features/common/BasicPage";
+import { sanityClient } from "@/lib/sanity/client";
+import { majorCategoriesWithProductCountQuery } from "@/lib/sanity/queries/products.queries";
+import { urlFor } from "@/lib/sanity/image";
 
-type ProductCategory = {
+type MajorCategoryHero = {
+  _id: string;
+  title: string;
+  slug: string;
+  description?: string;
+  icon?: string;
+  color?: string;
+  productCount: number;
+};
+
+type ProductSubCategory = {
   _id: string;
   title: string;
   slug: string;
@@ -24,18 +49,13 @@ type ProductItem = {
   category?: {
     title: string;
     slug: string;
+    icon?: string;
+    color?: string;
   };
   image?: unknown;
 };
 
-const FALLBACK_IMAGES = [
-  "https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?auto=format&fit=crop&w=900&q=80",
-  "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80",
-] as const;
-
-const categoriesQuery = `
+const subCategoriesQuery = `
 *[_type == "productCategory" && categoryType == "sub" && isActive == true] | order(order asc, title asc) {
   _id,
   title,
@@ -54,32 +74,92 @@ const productsQuery = `
   shortDescription,
   "category": category->{
     title,
-    "slug": slug.current
+    "slug": slug.current,
+    icon,
+    color
   },
   "image": coalesce(productImage, productImages[0])
 }
 `;
 
-function getProductImage(image: unknown, index: number) {
+const ICONS: Record<string, LucideIcon> = {
+  package: Package,
+  cpu: Cpu,
+  microchip: Cpu,
+  droplets: Droplets,
+  droplet: Droplets,
+  water: Droplets,
+  cylinder: Cylinder,
+  gas: Cylinder,
+  flame: Flame,
+  fire: Flame,
+  shield: Shield,
+  bell: Bell,
+  alarm: Bell,
+  radio: Radio,
+  zap: Zap,
+  lightning: Zap,
+  box: Box,
+};
+
+function categoryIconFromSanity(iconName?: string | null): LucideIcon {
+  if (!iconName?.trim()) return Package;
+  const k = iconName.trim().toLowerCase().replace(/[\s_-]+/g, "");
+  return ICONS[k] ?? Package;
+}
+
+function categoryBadgeClass(color?: string | null): string {
+  if (color === "fire") return "bg-fire text-white";
+  if (color === "orange") return "bg-orange text-white";
+  return "bg-blue text-white";
+}
+
+function getProductImage(image: unknown): string | null {
   if (image) {
-    return urlFor(image).width(720).height(520).fit("crop").url();
+    return urlFor(image).width(720).height(520).fit("max").url();
   }
-  return FALLBACK_IMAGES[index % FALLBACK_IMAGES.length];
+  return null;
 }
 
 export function ProductsScreen() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const categories = useQuery({
-    queryKey: ["product-categories"],
-    queryFn: () => sanityClient.fetch<ProductCategory[]>(categoriesQuery),
+  const majors = useQuery({
+    queryKey: ["product-major-categories"],
+    queryFn: () => sanityClient.fetch<MajorCategoryHero[]>(majorCategoriesWithProductCountQuery),
+  });
+
+  const subCategories = useQuery({
+    queryKey: ["product-sub-categories"],
+    queryFn: () => sanityClient.fetch<ProductSubCategory[]>(subCategoriesQuery),
   });
 
   const products = useQuery({
     queryKey: ["products-list"],
     queryFn: () => sanityClient.fetch<ProductItem[]>(productsQuery),
   });
+
+  const highlightCards = useMemo(() => {
+    const majorList = majors.data ?? [];
+    if (majorList.length > 0) {
+      return majorList.slice(0, 3).map((m) => ({
+        _id: m._id,
+        title: m.title,
+        description: m.description,
+        icon: m.icon,
+        productCount: m.productCount,
+      }));
+    }
+    const subs = [...(subCategories.data ?? [])].sort((a, b) => b.productCount - a.productCount);
+    return subs.slice(0, 3).map((s) => ({
+      _id: s._id,
+      title: s.title,
+      description: s.description,
+      icon: undefined as string | undefined,
+      productCount: s.productCount,
+    }));
+  }, [majors.data, subCategories.data]);
 
   const filteredProducts = useMemo(() => {
     const items = products.data ?? [];
@@ -103,131 +183,239 @@ export function ProductsScreen() {
     });
   }, [products.data, activeCategory, searchTerm]);
 
+  const loading = majors.isLoading || subCategories.isLoading || products.isLoading;
+  const error = majors.isError || subCategories.isError || products.isError;
+
   return (
     <Screen>
-      <section className="bg-[#f4f7fa] py-12 md:py-16">
-        <div className="container-site">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="inline-flex items-center rounded-pill border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-navy">
-              Product catalogue
-            </p>
-            <h1 className="mt-4 font-heading text-3xl font-extrabold text-navy md:text-5xl">Industrial control products</h1>
-            <p className="mt-3 text-slate-600">
-              Discover reliable control and fire safety products tailored for industrial and commercial projects.
-            </p>
+      <section className="relative overflow-hidden bg-navy pb-20 pt-10 text-white md:pb-24 md:pt-14">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_55%_at_50%_-15%,rgba(17,86,204,0.22),transparent_55%)]"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/[0.06] via-transparent to-navy"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,0.5)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:48px_48px]"
+          aria-hidden
+        />
+
+        <div className="container-site relative z-10">
+          <nav className="text-sm text-white/55" aria-label="Breadcrumb">
+            <ol className="flex flex-wrap items-center gap-2">
+              <li>
+                <Link to="/" className="transition hover:text-white">
+                  Home
+                </Link>
+              </li>
+              <li className="text-white/35" aria-hidden>
+                /
+              </li>
+              <li className="text-white/90">Products</li>
+            </ol>
+          </nav>
+          <h1 className="mt-6 font-heading text-2xl font-extrabold uppercase tracking-wide text-white md:text-4xl lg:text-[2.5rem] lg:leading-tight">
+            Fire safety &amp; building products
+          </h1>
+          <p className="mt-4 max-w-2xl text-sm leading-relaxed text-white/75 md:text-base">
+            Fire detection, alarm, and suppression products plus building-system components—specified for commercial and
+            industrial projects and aligned with recognised standards.
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-[#f4f7fa] pb-14 pt-0 md:pb-20">
+        <div className="container-site relative z-10 -mt-14 md:-mt-16">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {highlightCards.map((card, index) => {
+              const Icon = categoryIconFromSanity(card.icon);
+              return (
+                <motion.div
+                  key={card._id}
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
+                  whileHover={{ y: -5 }}
+                  className="group cursor-default rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card transition-[border-color,box-shadow] duration-300 hover:border-blue hover:shadow-lg md:p-7"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors duration-300 group-hover:border-blue/45 group-hover:text-blue">
+                    <Icon className="h-5 w-5 transition-colors duration-300" aria-hidden />
+                  </div>
+                  <h2 className="mt-4 font-heading text-sm font-extrabold uppercase leading-snug tracking-wide text-navy transition-colors duration-300 group-hover:text-navy md:text-base">
+                    {card.title}
+                  </h2>
+                  <p className="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                    {card.description?.trim() ||
+                      "Engineered products and systems for demanding building environments, with documentation and support from our team."}
+                  </p>
+                  <p className="mt-5 inline-flex rounded-pill border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-xs font-medium text-slate-600 transition-colors duration-300 group-hover:border-blue/25 group-hover:bg-blue-light/40">
+                    {card.productCount} {card.productCount === 1 ? "product" : "products"}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
 
-          <div className="mt-8 rounded-2xl border border-slate-200 bg-white p-4 shadow-card md:p-6">
+          <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-slate-600 md:mt-12 md:text-base">
+            Discover reliable control and fire safety products tailored for industrial and commercial projects.
+          </p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.15, ease: "easeOut" }}
+            className="mx-auto mt-6 max-w-4xl rounded-2xl border border-slate-200/90 bg-white p-4 shadow-card md:mt-8 md:p-6"
+          >
+            <label htmlFor="products-search" className="sr-only">
+              Search products
+            </label>
             <div className="relative">
-              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden />
               <input
+                id="products-search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search products, codes, or descriptions..."
-                className="w-full rounded-lg border border-slate-200 py-3 pl-11 pr-4 text-sm outline-none transition focus:border-blue"
+                className="w-full rounded-lg border border-slate-200 py-3 pl-11 pr-4 text-sm outline-none transition-all duration-200 placeholder:text-slate-400 focus:border-blue focus:ring-2 focus:ring-blue/20"
               />
             </div>
 
-            <div className="mt-5 flex flex-wrap gap-2">
-              <button
+            <p className="mb-3 mt-6 text-[11px] font-bold uppercase tracking-wider text-slate-500">Browse by category</p>
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 md:flex-wrap md:overflow-visible">
+              <motion.button
                 type="button"
+                whileTap={{ scale: 0.98 }}
+                aria-pressed={activeCategory === "all"}
                 onClick={() => setActiveCategory("all")}
-                className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
+                className={`shrink-0 rounded-md px-3 py-2 text-xs font-semibold transition-colors duration-200 md:text-sm ${
                   activeCategory === "all"
-                    ? "bg-blue text-white"
-                    : "border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"
+                    ? "bg-blue text-white shadow-sm"
+                    : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                 }`}
               >
-                All
-              </button>
-              {(categories.data ?? []).map((category) => (
-                <button
-                  key={category._id}
+                All{products.data ? ` (${products.data.length})` : ""}
+              </motion.button>
+              {(subCategories.data ?? []).map((cat) => (
+                <motion.button
+                  key={cat._id}
                   type="button"
-                  onClick={() => setActiveCategory(category.slug)}
-                  className={`rounded-md px-3 py-1.5 text-sm font-medium transition ${
-                    activeCategory === category.slug
-                      ? "bg-blue text-white"
-                      : "border border-slate-200 bg-slate-50 text-slate-700 hover:border-slate-300"
+                  whileTap={{ scale: 0.98 }}
+                  aria-pressed={activeCategory === cat.slug}
+                  onClick={() => setActiveCategory(cat.slug)}
+                  className={`shrink-0 rounded-md px-3 py-2 text-left text-xs font-semibold transition-colors duration-200 md:text-sm ${
+                    activeCategory === cat.slug
+                      ? "bg-blue text-white shadow-sm"
+                      : "border border-slate-200 bg-white text-slate-700 hover:border-slate-300"
                   }`}
                 >
-                  {category.title} <span className="opacity-70">({category.productCount})</span>
-                </button>
+                  {cat.title}{" "}
+                  <span className="opacity-80">({cat.productCount})</span>
+                </motion.button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="mt-8 flex items-center justify-between">
-            <p className="text-sm text-slate-700">
-              <span className="font-semibold text-navy">{filteredProducts.length}</span> products found
+          {!loading && !error ? (
+            <p className="mt-6 text-sm text-slate-700">
+              <span className="font-semibold text-navy">{filteredProducts.length}</span>{" "}
+              {filteredProducts.length === 1 ? "product" : "products"} found
             </p>
-          </div>
+          ) : null}
 
-          {products.isLoading ? (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="overflow-hidden rounded-xl border border-slate-200 bg-white">
-                  <div className="aspect-[4/3] animate-pulse bg-slate-100" />
-                  <div className="space-y-3 p-4">
-                    <div className="h-4 w-1/3 animate-pulse rounded bg-slate-100" />
+          {error ? (
+            <div className="mt-10 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              Unable to load products from Sanity right now. Please try again.
+            </div>
+          ) : null}
+
+          {loading ? (
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+                  <div className="aspect-[5/4] animate-pulse bg-slate-100" />
+                  <div className="space-y-3 p-5">
                     <div className="h-4 w-2/3 animate-pulse rounded bg-slate-100" />
-                    <div className="h-12 animate-pulse rounded bg-slate-100" />
+                    <div className="h-3 w-full animate-pulse rounded bg-slate-100" />
+                    <div className="h-3 w-5/6 animate-pulse rounded bg-slate-100" />
                   </div>
                 </div>
               ))}
             </div>
           ) : null}
 
-          {products.isError ? (
-            <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
-              Unable to load products from Sanity right now. Please try again.
-            </div>
-          ) : null}
-
-          {!products.isLoading && !products.isError ? (
+          {!loading && !error ? (
             filteredProducts.length > 0 ? (
-              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                {filteredProducts.map((product, index) => (
-                  <article
-                    key={product._id}
-                    className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-card"
-                  >
-                    <img
-                      src={getProductImage(product.image, index)}
-                      alt={product.title}
-                      className="aspect-[4/3] w-full object-cover"
-                      width={400}
-                      height={300}
-                    />
-                    <div className="p-4">
-                      <p className="text-xs font-semibold uppercase tracking-wide text-blue">
-                        {product.category?.title ?? "General"}
-                      </p>
-                      <h2 className="mt-2 font-heading text-lg font-bold text-navy">{product.title}</h2>
-                      <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                        {product.shortDescription?.trim() ||
-                          "Reliable industrial-grade component engineered for stable performance and long service life."}
-                      </p>
-                      <div className="mt-4">
+              <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {filteredProducts.map((product) => {
+                  const imgUrl = getProductImage(product.image);
+                  const badgeLabel = (product.category?.title ?? "Product").toUpperCase();
+                  const badgeClass = categoryBadgeClass(product.category?.color);
+                  const catSlug = product.category?.slug ?? "general";
+                  const PlaceholderIcon = categoryIconFromSanity(product.category?.icon);
+
+                  return (
+                    <motion.article
+                      key={product._id}
+                      layout={false}
+                      whileHover={{ y: -4 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-card transition-[border-color,box-shadow] duration-300 hover:border-blue/70 hover:shadow-lg"
+                    >
+                      <div className="relative aspect-[5/4] bg-slate-100 transition-colors duration-300 group-hover:bg-slate-50">
+                        <span
+                          className={`absolute left-3 top-3 z-10 max-w-[calc(100%-1.5rem)] truncate px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${badgeClass}`}
+                        >
+                          {badgeLabel}
+                        </span>
+                        {imgUrl ? (
+                          <img
+                            src={imgUrl}
+                            alt={product.title}
+                            className="h-full w-full object-contain p-6 transition-transform duration-300 group-hover:scale-[1.02]"
+                            loading="lazy"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-slate-300 transition-colors duration-300 group-hover:text-blue/80">
+                            <PlaceholderIcon className="h-14 w-14" aria-hidden />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-1 flex-col p-5 pt-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <h2 className="min-w-0 flex-1 font-heading text-base font-bold leading-snug text-navy">
+                            {product.title}
+                          </h2>
+                          {product.productCode?.trim() ? (
+                            <span className="shrink-0 rounded border border-slate-200 bg-slate-50 px-2 py-0.5 font-mono text-[11px] font-medium uppercase text-slate-600">
+                              {product.productCode.trim()}
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                          {product.shortDescription?.trim() ||
+                            "Reliable component engineered for stable performance and long service life in building services applications."}
+                        </p>
                         <Link
                           to="/products/$categorySlug/$productSlug"
-                          params={{
-                            categorySlug: product.category?.slug ?? "general",
-                            productSlug: product.slug,
-                          }}
-                          className="inline-flex text-sm font-semibold text-blue hover:underline"
+                          params={{ categorySlug: catSlug, productSlug: product.slug }}
+                          className="mt-4 inline-flex items-center gap-1 text-xs font-bold uppercase tracking-wide text-navy transition-colors group-hover:text-blue"
                         >
                           View details
+                          <span aria-hidden>→</span>
                         </Link>
                       </div>
-                    </div>
-                  </article>
-                ))}
+                    </motion.article>
+                  );
+                })}
               </div>
             ) : (
-              <div className="mt-6 rounded-lg border border-slate-200 bg-white p-8 text-center">
-                <p className="font-medium text-navy">No products match your search.</p>
-                <p className="mt-2 text-sm text-slate-600">Try another keyword or select a different category.</p>
+              <div className="mt-8 rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
+                <p className="font-heading font-bold text-navy">No products match your filters</p>
+                <p className="mt-2 text-sm text-slate-600">
+                  Try another search term, pick &ldquo;All&rdquo;, or select a different category.
+                </p>
               </div>
             )
           ) : null}

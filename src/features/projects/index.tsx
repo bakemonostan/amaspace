@@ -1,5 +1,30 @@
+import { Building2 } from "lucide-react";
+import { useState } from "react";
 import { Screen } from "@/components/ui/Screen";
 import { portfolioProjects } from "@/features/projects/portfolio-data";
+
+function ProjectCoverImage({ src, alt }: { src: string; alt: string }) {
+  const [failed, setFailed] = useState(false);
+
+  if (failed) {
+    return (
+      <div className="flex h-full min-h-[140px] w-full flex-col items-center justify-center gap-2 bg-slate-200 text-slate-500">
+        <Building2 className="h-10 w-10 shrink-0 opacity-45" aria-hidden />
+        <span className="px-4 text-center text-[11px] font-medium">Photo unavailable</span>
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="h-full w-full object-cover"
+      loading="lazy"
+      onError={() => setFailed(true)}
+    />
+  );
+}
 
 export function ProjectsScreen() {
   return (
@@ -23,12 +48,7 @@ export function ProjectsScreen() {
                 className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card"
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-slate-200">
-                  <img
-                    src={project.imageUrl}
-                    alt={project.imageAlt}
-                    className="h-full w-full object-cover"
-                    loading="lazy"
-                  />
+                  <ProjectCoverImage src={project.imageUrl} alt={project.imageAlt} />
                   {project.status === "ongoing" ? (
                     <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-navy shadow-sm">
                       In progress
