@@ -7,7 +7,9 @@ import { BrandLogo } from "@/components/BrandLogo";
 const CONTACT_BAR_PX = 40;
 
 function navLinkClass(active: boolean) {
-  return active ? "text-blue font-medium" : "text-slate-600 hover:text-navy";
+  return active
+    ? "font-semibold text-orange underline decoration-2 decoration-orange underline-offset-[10px]"
+    : "text-slate-600 decoration-transparent hover:text-navy";
 }
 
 export function Navbar() {
@@ -125,11 +127,34 @@ export function Navbar() {
             >
               <div className="container-site flex flex-1 flex-col py-4">
                 <div className="flex flex-col gap-1">
-                  <Link to="/" className="py-2 text-sm font-medium text-navy" onClick={closeAll}>Home</Link>
-                  <Link to="/services" className="py-2 text-sm text-slate-700" onClick={closeAll}>Services</Link>
-
-                  <Link to="/products" className="py-2 text-sm text-slate-700" onClick={closeAll}>Products</Link>
-                  <Link to="/projects" className="py-2 text-sm text-slate-700" onClick={closeAll}>Portfolio</Link>
+                  <Link
+                    to="/"
+                    className={`border-l-4 py-2 pl-3 text-sm ${isHome ? "border-orange font-semibold text-orange" : "border-transparent text-slate-700"}`}
+                    onClick={closeAll}
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    to="/services"
+                    className={`border-l-4 py-2 pl-3 text-sm ${isServices ? "border-orange font-semibold text-orange" : "border-transparent text-slate-700"}`}
+                    onClick={closeAll}
+                  >
+                    Services
+                  </Link>
+                  <Link
+                    to="/products"
+                    className={`border-l-4 py-2 pl-3 text-sm ${isProducts ? "border-orange font-semibold text-orange" : "border-transparent text-slate-700"}`}
+                    onClick={closeAll}
+                  >
+                    Products
+                  </Link>
+                  <Link
+                    to="/projects"
+                    className={`border-l-4 py-2 pl-3 text-sm ${isPortfolio ? "border-orange font-semibold text-orange" : "border-transparent text-slate-700"}`}
+                    onClick={closeAll}
+                  >
+                    Portfolio
+                  </Link>
 
                   <Link
                     to="/request-quote"
