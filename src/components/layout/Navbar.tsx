@@ -48,12 +48,10 @@ export function Navbar() {
 
   const isHome = pathname === "/";
   const isServices = pathname === "/services" || pathname.startsWith("/services/");
+  const isProducts = pathname === "/products" || pathname.startsWith("/products/");
   const isPortfolio = pathname === "/projects" || pathname.startsWith("/projects/");
   const isSpecializations =
-    pathname === "/specializations" ||
-    pathname.startsWith("/specializations/") ||
-    pathname === "/products" ||
-    pathname.startsWith("/products/");
+    pathname === "/specializations" || pathname.startsWith("/specializations/");
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -133,6 +131,11 @@ export function Navbar() {
               </div>
             </div>
           </div>
+          <Link
+            to='/products'
+            className={`text-sm ${navLinkClass(isProducts)}`}>
+            Products
+          </Link>
           <Link
             to='/projects'
             className={`text-sm ${navLinkClass(isPortfolio)}`}>
@@ -220,6 +223,12 @@ export function Navbar() {
                     ))}
                   </div>
                 ) : null}
+                <Link
+                  to='/products'
+                  className='py-2 text-sm text-slate-700'
+                  onClick={() => setMobileOpen(false)}>
+                  Products
+                </Link>
                 <Link
                   to='/projects'
                   className='py-2 text-sm text-slate-700'

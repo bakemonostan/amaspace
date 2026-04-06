@@ -126,18 +126,21 @@ const capabilities = [
     title: "HVAC systems",
     desc: "Design, procurement, installation, troubleshooting, and maintenance for commercial and residential buildings.",
     bullets: ["Packaged & VRF systems", "Kitchen hood & make-up air", "Smoke extract & HVAC controls"],
+    learnMore: { to: "/services/$serviceSlug" as const, params: { serviceSlug: "hvac" as const } },
   },
   {
     icon: Zap,
     title: "Electrical engineering",
     desc: "Safe, efficient power from the grid to the final outlet—MV/LV distribution, metering, backup, and smart lighting.",
     bullets: ["MV/LV distribution & substations", "Backup & generation", "Smart LED & street lighting"],
+    learnMore: { to: "/services/$serviceSlug" as const, params: { serviceSlug: "electrical-engineering" as const } },
   },
   {
     icon: Droplets,
     title: "Plumbing & piping",
     desc: "Water, wastewater, conveyance, and public health engineering for complex commercial infrastructure.",
     bullets: ["Treatment & conveyance", "Drainage & sewage", "Industrial piping"],
+    learnMore: { to: "/services" as const },
   },
 ] as const;
 
@@ -152,7 +155,7 @@ export function CoreCapabilitiesSection() {
           </p>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {capabilities.map(({ icon: Icon, title, desc, bullets }) => (
+          {capabilities.map(({ icon: Icon, title, desc, bullets, learnMore }) => (
             <div key={title} className="rounded-2xl border border-slate-100 bg-white p-8 shadow-card">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-navy">
                 <Icon className="h-6 w-6" strokeWidth={1.5} />
@@ -167,10 +170,24 @@ export function CoreCapabilitiesSection() {
                   </li>
                 ))}
               </ul>
-              <Link to="/services" className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue hover:underline">
-                Learn more
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              {"params" in learnMore ? (
+                <Link
+                  to={learnMore.to}
+                  params={learnMore.params}
+                  className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue hover:underline"
+                >
+                  Learn more
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link
+                  to={learnMore.to}
+                  className="mt-6 inline-flex items-center gap-1 text-sm font-semibold text-blue hover:underline"
+                >
+                  Learn more
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
             </div>
           ))}
         </div>
@@ -193,7 +210,8 @@ const specItems = [
     title: "Fire safety systems",
     desc: "Fire alarm & smoke detection, VESDA, foam, water mist, gas suppression, sprinklers, hydrants, hose reels, and portable extinguishers—designed, installed, tested, and maintained.",
     cta: "Explore fire safety expertise",
-    to: "/products",
+    to: "/services/$serviceSlug" as const,
+    params: { serviceSlug: "fire-safety-systems" as const },
     activeBorder: "border-fire",
     ctaClass: "text-fire",
     showFlame: true,
@@ -246,13 +264,24 @@ export function SpecializedSolutionsSection() {
                         <p className="font-heading text-base font-bold text-navy">{item.title}</p>
                         <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
                         {isActive ? (
-                          <Link
-                            to={item.to}
-                            className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
-                          >
-                            {item.cta}
-                            <ArrowRight className="h-4 w-4" />
-                          </Link>
+                          "params" in item ? (
+                            <Link
+                              to={item.to}
+                              params={item.params}
+                              className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
+                            >
+                              {item.cta}
+                              <ArrowRight className="h-4 w-4" />
+                            </Link>
+                          ) : (
+                            <Link
+                              to={item.to}
+                              className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
+                            >
+                              {item.cta}
+                              <ArrowRight className="h-4 w-4" />
+                            </Link>
+                          )
                         ) : null}
                       </div>
                     </div>
@@ -359,24 +388,3 @@ export function TrustedBySection() {
   );
 }
 
-export function OrangeCtaSection() {
-  return (
-    <section className="bg-orange py-12 text-center text-white sm:py-16">
-      <div className="container-site max-w-3xl">
-        <h2 className="text-balance font-heading text-2xl font-bold sm:text-3xl md:text-4xl">
-          Ready to elevate your building&apos;s performance?
-        </h2>
-        <p className="mt-4 text-base text-white/90">
-          Contact our engineering team to discuss your requirements and receive a structured consultation aligned with
-          your programme and budget.
-        </p>
-        <Link
-          to="/request-quote"
-          className="mt-8 inline-flex items-center justify-center rounded-lg bg-white px-8 py-3 text-sm font-semibold text-orange hover:bg-white/95"
-        >
-          Request a quote now
-        </Link>
-      </div>
-    </section>
-  );
-}

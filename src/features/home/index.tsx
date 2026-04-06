@@ -3,7 +3,6 @@ import {
   CoreCapabilitiesSection,
   FeaturedProjectsSection,
   HeroSection,
-  OrangeCtaSection,
   SpecializedSolutionsSection,
   TrustStrip,
   TrustedBySection,
@@ -18,7 +17,6 @@ export function HomeScreen() {
       <SpecializedSolutionsSection />
       <FeaturedProjectsSection />
       <TrustedBySection />
-      <OrangeCtaSection />
     </Screen>
   );
 }

@@ -18,10 +18,18 @@ function TwitterIcon({ className }: { className?: string }) {
 }
 
 const serviceLinks = [
-  { to: "/services", label: "HVAC Systems" },
-  { to: "/services", label: "Electrical Engineering" },
-  { to: "/services", label: "Plumbing & Public Health" },
-  { to: "/products", label: "Fire Safety" },
+  { label: "HVAC Systems", to: "/services/$serviceSlug" as const, params: { serviceSlug: "hvac" } },
+  {
+    label: "Electrical Engineering",
+    to: "/services/$serviceSlug" as const,
+    params: { serviceSlug: "electrical-engineering" },
+  },
+  { label: "Plumbing & Public Health", to: "/services" as const },
+  {
+    label: "Fire Safety",
+    to: "/services/$serviceSlug" as const,
+    params: { serviceSlug: "fire-safety-systems" },
+  },
 ] as const;
 
 export function Footer() {
@@ -112,11 +120,15 @@ export function Footer() {
                       aria-hidden
                     />
                   ) : null}
-                  <Link
-                    to={item.to}
-                    className='hover:text-orange'>
-                    {item.label}
-                  </Link>
+                  {"params" in item ? (
+                    <Link to={item.to} params={item.params} className="hover:text-orange">
+                      {item.label}
+                    </Link>
+                  ) : (
+                    <Link to={item.to} className="hover:text-orange">
+                      {item.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
