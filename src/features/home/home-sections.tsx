@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import {
   ArrowRight,
   Building2,
@@ -11,6 +12,11 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+};
 
 const heroImg =
   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80";
@@ -28,20 +34,20 @@ export function HeroSection() {
   return (
     <section className="bg-[#f4f7fa] pb-16 pt-12 md:pb-20 md:pt-16">
       <div className="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-        <div>
-          <p className="inline-flex items-center gap-2 rounded-pill border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-navy">
+        <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
+          <motion.p variants={fadeUp} className="inline-flex items-center gap-2 rounded-pill border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-navy">
             <span className="h-1.5 w-1.5 rounded-full bg-blue" aria-hidden />
             Engineering excellence
-          </p>
-          <h1 className="mt-5 font-heading text-4xl font-extrabold leading-tight text-navy md:text-5xl">
+          </motion.p>
+          <motion.h1 variants={fadeUp} className="mt-5 font-heading text-4xl font-extrabold leading-tight text-navy md:text-5xl">
             Building services engineered for <span className="text-orange">reliability.</span>
-          </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
+          </motion.h1>
+          <motion.p variants={fadeUp} className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
             Amaspace is a fast-growing Nigerian building services firm—delivering mechanical, electrical, plumbing, fire
             safety, and security solutions with cutting-edge technology, strict quality standards, and a proven track
             record on commercial and industrial projects.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
+          </motion.p>
+          <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/request-quote"
               className="inline-flex items-center justify-center rounded-lg bg-orange px-6 py-3 text-sm font-semibold text-white hover:bg-orange-hover"
@@ -54,9 +60,14 @@ export function HeroSection() {
             >
               Explore Services
             </Link>
-          </div>
-        </div>
-        <div className="relative mx-auto w-full max-w-md pb-12 lg:max-w-none lg:pb-0">
+          </motion.div>
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          className="relative mx-auto w-full max-w-md pb-12 lg:max-w-none lg:pb-0"
+        >
           <div className="overflow-hidden rounded-3xl shadow-card">
             <img
               src={heroImg}
@@ -78,7 +89,7 @@ export function HeroSection() {
               <p className="text-xs text-slate-600">Quality management system compliant.</p>
             </div>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
@@ -155,8 +166,15 @@ export function CoreCapabilitiesSection() {
           </p>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {capabilities.map(({ icon: Icon, title, desc, bullets, learnMore }) => (
-            <div key={title} className="rounded-2xl border border-slate-100 bg-white p-8 shadow-card">
+          {capabilities.map(({ icon: Icon, title, desc, bullets, learnMore }, i) => (
+            <motion.div
+              key={title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="rounded-2xl border border-slate-100 bg-white p-8 shadow-card"
+            >
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-navy">
                 <Icon className="h-6 w-6" strokeWidth={1.5} />
               </div>
@@ -188,7 +206,7 @@ export function CoreCapabilitiesSection() {
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               )}
-            </div>
+            </motion.div>
           ))}
         </div>
         <div className="mt-12 flex justify-center">
@@ -342,8 +360,15 @@ export function FeaturedProjectsSection() {
           </Link>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {featuredProjects.map((p) => (
-            <article key={p.title} className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card">
+          {featuredProjects.map((p, i) => (
+            <motion.article
+              key={p.title}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card"
+            >
               <img
                 src={p.img}
                 alt={p.title}
@@ -355,7 +380,7 @@ export function FeaturedProjectsSection() {
                 <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
                 <p className="mt-1 text-sm text-slate-600">{p.sub}</p>
               </div>
-            </article>
+            </motion.article>
           ))}
         </div>
       </div>
