@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
@@ -16,6 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useMemo, useState } from "react";
+import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 import { BasicPage } from "@/features/common/BasicPage";
 import { sanityClient } from "@/lib/sanity/client";
@@ -188,6 +189,10 @@ export function ProductsScreen() {
 
   return (
     <Screen>
+      <Seo
+        title="Fire safety & building products"
+        description="Browse fire detection, alarm, suppression, and building-system products for commercial and industrial projects in Nigeria—Sanity-backed catalogue with categories and technical listings."
+      />
       <section className="relative overflow-hidden bg-navy pb-20 pt-10 text-white md:pb-24 md:pt-14">
         <div
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_90%_55%_at_50%_-15%,rgba(17,86,204,0.22),transparent_55%)]"
@@ -425,10 +430,42 @@ export function ProductsScreen() {
   );
 }
 
+function slugToLabel(slug: string) {
+  return slug
+    .split("-")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export function ProductCategoryScreen() {
-  return <BasicPage title="Product Category" sub="Products filtered by selected category." />;
+  const { categorySlug } = useParams({ from: "/products/$categorySlug" });
+  const label = slugToLabel(categorySlug);
+
+  return (
+    <>
+      <Seo
+        title={`${label} products`}
+        description={`${label} products in the Amaspace catalogue—fire safety and building products for professional MEP and life-safety projects in Nigeria.`}
+        pathname={`/products/${categorySlug}`}
+      />
+      <BasicPage title="Product Category" sub="Products filtered by selected category." />
+    </>
+  );
 }
 
 export function ProductDetailScreen() {
-  return <BasicPage title="Product Detail" sub="Specs, gallery, and related products." />;
+  const { categorySlug, productSlug } = useParams({ from: "/products/$categorySlug/$productSlug" });
+  const productLabel = slugToLabel(productSlug);
+
+  return (
+    <>
+      <Seo
+        title={productLabel}
+        description={`${productLabel}—specifications, imagery, and documentation from the Amaspace product catalogue (${slugToLabel(categorySlug)}).`}
+        pathname={`/products/${categorySlug}/${productSlug}`}
+      />
+      <BasicPage title="Product Detail" sub="Specs, gallery, and related products." />
+    </>
+  );
 }

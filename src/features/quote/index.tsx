@@ -1,5 +1,6 @@
 import { useId, useState } from "react";
 import { ChevronDown, Clock, FileText, Mail, MapPin, Phone, Send } from "lucide-react";
+import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 
 const SITE = {
@@ -34,6 +35,10 @@ export function RequestQuoteScreen() {
 
   return (
     <Screen>
+      <Seo
+        title="Request a quote"
+        description="Submit your engineering scope to Amaspace for a structured quote—MEP, fire safety, and building services. We aim to respond within 24 business hours with a clear proposal."
+      />
       <section className="bg-[#f4f7fa] py-12 md:py-16 lg:py-20">
         <div className="container-site">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-12 xl:gap-16">

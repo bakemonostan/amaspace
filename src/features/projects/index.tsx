@@ -1,5 +1,6 @@
 import { Building2 } from "lucide-react";
 import { useState } from "react";
+import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 import { portfolioProjects } from "@/features/projects/portfolio-data";
 
@@ -29,6 +30,10 @@ function ProjectCoverImage({ src, alt }: { src: string; alt: string }) {
 export function ProjectsScreen() {
   return (
     <Screen>
+      <Seo
+        title="Project portfolio"
+        description="Selected Amaspace projects across Nigeria—MEP, fire safety, security, ELV, and retail and commercial building services from Lagos to Abuja and Accra."
+      />
       <section className="bg-navy py-14 text-center text-white md:py-20">
         <div className="container-site">
           <h1 className="font-heading text-3xl font-extrabold md:text-4xl lg:text-5xl">Project portfolio</h1>

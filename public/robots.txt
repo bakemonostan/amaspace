@@ -1,0 +1,6 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Add your absolute sitemap URL after you set VITE_SITE_URL and deploy, e.g.:
+# Sitemap: https://www.example.com/sitemap.xml

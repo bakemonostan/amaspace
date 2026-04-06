@@ -1,5 +1,6 @@
 import { Outlet, useRouterState } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
+import { OrganizationJsonLd } from "@/components/OrganizationJsonLd";
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { SiteCta } from "@/components/layout/SiteCta";
@@ -12,6 +13,7 @@ export function RootLayout() {
 
   return (
     <ErrorBoundary>
+      <OrganizationJsonLd />
       <TopContactBar />
       <Navbar />
       <main>

@@ -1,4 +1,6 @@
+import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
+import { DEFAULT_DESCRIPTION, DEFAULT_TITLE } from "@/lib/seo/config";
 import {
   CoreCapabilitiesSection,
   FeaturedProjectsSection,
@@ -11,6 +13,7 @@ import {
 export function HomeScreen() {
   return (
     <Screen>
+      <Seo title={DEFAULT_TITLE} description={DEFAULT_DESCRIPTION} isHome />
       <HeroSection />
       <TrustStrip />
       <CoreCapabilitiesSection />

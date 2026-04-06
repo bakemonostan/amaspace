@@ -1,9 +1,11 @@
 import { Link, useParams } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { ArrowRight, Flame } from "lucide-react";
+import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 import { BasicPage } from "@/features/common/BasicPage";
 import { ServiceLandingView } from "@/features/services/ServiceLanding";
+import { truncateMeta } from "@/lib/seo/truncate";
 import {
   getServiceConfig,
   servicePages,
@@ -20,6 +22,10 @@ function hubIconFor(slug: ServiceSlug): LucideIcon {
 export function ServicesScreen() {
   return (
     <Screen>
+      <Seo
+        title="Engineering services"
+        description="MEP, fire life-safety, electrical, and mechanical building services for Nigeria—code-aligned design and installation, coordinated delivery, and ISO 9001 quality with strong HSE practices."
+      />
       <section className="bg-[#f4f7fa] py-12 md:py-16">
         <div className="container-site">
           <div className="mx-auto max-w-3xl text-center">
@@ -95,8 +101,25 @@ export function ServiceDetailScreen() {
   const config = getServiceConfig(serviceSlug);
 
   if (!config) {
-    return <BasicPage title="Service not found" sub="This service page does not exist." />;
+    return (
+      <>
+        <Seo title="Service not found" description="The requested service page does not exist on Amaspace." noindex />
+        <BasicPage title="Service not found" sub="This service page does not exist." />
+      </>
+    );
   }
 
-  return <ServiceLandingView config={config} />;
+  const pageTitle = config.layout === "fire" ? config.title : config.sectionTitle;
+  const pageDescription = truncateMeta(config.heroSub);
+
+  return (
+    <>
+      <Seo
+        title={pageTitle}
+        description={pageDescription}
+        pathname={`/services/${serviceSlug}`}
+      />
+      <ServiceLandingView config={config} />
+    </>
+  );
 }
