@@ -19,6 +19,7 @@ import { useMemo, useState } from "react";
 import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 import { BasicPage } from "@/features/common/BasicPage";
+import { ProductDetail } from "@/features/products/ProductDetail";
 import { sanityClient } from "@/lib/sanity/client";
 import { majorCategoriesWithProductCountQuery } from "@/lib/sanity/queries/products.queries";
 import { urlFor } from "@/lib/sanity/image";
@@ -439,7 +440,7 @@ function slugToLabel(slug: string) {
 }
 
 export function ProductCategoryScreen() {
-  const { categorySlug } = useParams({ from: "/products/$categorySlug" });
+  const { categorySlug } = useParams({ from: "/products/$categorySlug/" });
   const label = slugToLabel(categorySlug);
 
   return (
@@ -456,16 +457,5 @@ export function ProductCategoryScreen() {
 
 export function ProductDetailScreen() {
   const { categorySlug, productSlug } = useParams({ from: "/products/$categorySlug/$productSlug" });
-  const productLabel = slugToLabel(productSlug);
-
-  return (
-    <>
-      <Seo
-        title={productLabel}
-        description={`${productLabel}—specifications, imagery, and documentation from the Amaspace product catalogue (${slugToLabel(categorySlug)}).`}
-        pathname={`/products/${categorySlug}/${productSlug}`}
-      />
-      <BasicPage title="Product Detail" sub="Specs, gallery, and related products." />
-    </>
-  );
+  return <ProductDetail categorySlug={categorySlug} productSlug={productSlug} />;
 }

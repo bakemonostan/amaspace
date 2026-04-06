@@ -38,11 +38,53 @@ export const productBySlugQuery = `
     productCode,
     shortDescription,
     fullDescription,
+    badgeLabel,
+    keyFeatures,
+    detailHighlightsSectionTitle,
+    detailHighlights,
+    specificationsIntro,
+    technicalLeadNote,
     specifications,
     datasheetUrl,
+    installationBookingUrl,
+    documents[]{
+      title,
+      subtitle,
+      "url": file.asset->url,
+      "sizeBytes": file.asset->size,
+      "fileName": file.asset->originalFilename
+    },
     "productImage": productImage.asset->url,
     "productImages": productImages[].asset->url,
-    "category": category->{ title, "slug": slug.current, icon, color }
+    "category": category->{
+      title,
+      "slug": slug.current,
+      icon,
+      color,
+      "parent": parentCategory->{ title, "slug": slug.current }
+    },
+    "relatedManual": relatedProducts[]->{
+      _id,
+      title,
+      "slug": slug.current,
+      productCode,
+      shortDescription,
+      "categorySlug": category->slug.current,
+      "imageUrl": coalesce(productImage.asset->url, productImages[0].asset->url)
+    },
+    "relatedSuggested": *[
+      _type == "product" &&
+      _id != ^._id &&
+      category._ref == ^.category._ref
+    ] | order(title asc) [0..8] {
+      _id,
+      title,
+      "slug": slug.current,
+      productCode,
+      shortDescription,
+      "categorySlug": category->slug.current,
+      "imageUrl": coalesce(productImage.asset->url, productImages[0].asset->url)
+    }
   }
 `;
 

@@ -18,9 +18,11 @@ import { Route as ContactRouteImport } from "./routes/contact"
 import { Route as AboutRouteImport } from "./routes/about"
 import { Route as IndexRouteImport } from "./routes/index"
 import { Route as ServicesIndexRouteImport } from "./routes/services.index"
+import { Route as ProductsIndexRouteImport } from "./routes/products.index"
 import { Route as SpecializationsSlugRouteImport } from "./routes/specializations.$slug"
 import { Route as ServicesServiceSlugRouteImport } from "./routes/services.$serviceSlug"
 import { Route as ProductsCategorySlugRouteImport } from "./routes/products.$categorySlug"
+import { Route as ProductsCategorySlugIndexRouteImport } from "./routes/products.$categorySlug.index"
 import { Route as ProductsCategorySlugProductSlugRouteImport } from "./routes/products.$categorySlug.$productSlug"
 
 const SpecializationsRoute = SpecializationsRouteImport.update({
@@ -68,6 +70,11 @@ const ServicesIndexRoute = ServicesIndexRouteImport.update({
   path: "/",
   getParentRoute: () => ServicesRoute,
 } as any)
+const ProductsIndexRoute = ProductsIndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => ProductsRoute,
+} as any)
 const SpecializationsSlugRoute = SpecializationsSlugRouteImport.update({
   id: "/$slug",
   path: "/$slug",
@@ -83,6 +90,12 @@ const ProductsCategorySlugRoute = ProductsCategorySlugRouteImport.update({
   path: "/$categorySlug",
   getParentRoute: () => ProductsRoute,
 } as any)
+const ProductsCategorySlugIndexRoute =
+  ProductsCategorySlugIndexRouteImport.update({
+    id: "/",
+    path: "/",
+    getParentRoute: () => ProductsCategorySlugRoute,
+  } as any)
 const ProductsCategorySlugProductSlugRoute =
   ProductsCategorySlugProductSlugRouteImport.update({
     id: "/$productSlug",
@@ -102,22 +115,24 @@ export interface FileRoutesByFullPath {
   "/products/$categorySlug": typeof ProductsCategorySlugRouteWithChildren
   "/services/$serviceSlug": typeof ServicesServiceSlugRoute
   "/specializations/$slug": typeof SpecializationsSlugRoute
+  "/products/": typeof ProductsIndexRoute
   "/services/": typeof ServicesIndexRoute
   "/products/$categorySlug/$productSlug": typeof ProductsCategorySlugProductSlugRoute
+  "/products/$categorySlug/": typeof ProductsCategorySlugIndexRoute
 }
 export interface FileRoutesByTo {
   "/": typeof IndexRoute
   "/about": typeof AboutRoute
   "/contact": typeof ContactRoute
-  "/products": typeof ProductsRouteWithChildren
   "/projects": typeof ProjectsRoute
   "/request-quote": typeof RequestQuoteRoute
   "/specializations": typeof SpecializationsRouteWithChildren
-  "/products/$categorySlug": typeof ProductsCategorySlugRouteWithChildren
   "/services/$serviceSlug": typeof ServicesServiceSlugRoute
   "/specializations/$slug": typeof SpecializationsSlugRoute
+  "/products": typeof ProductsIndexRoute
   "/services": typeof ServicesIndexRoute
   "/products/$categorySlug/$productSlug": typeof ProductsCategorySlugProductSlugRoute
+  "/products/$categorySlug": typeof ProductsCategorySlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -132,8 +147,10 @@ export interface FileRoutesById {
   "/products/$categorySlug": typeof ProductsCategorySlugRouteWithChildren
   "/services/$serviceSlug": typeof ServicesServiceSlugRoute
   "/specializations/$slug": typeof SpecializationsSlugRoute
+  "/products/": typeof ProductsIndexRoute
   "/services/": typeof ServicesIndexRoute
   "/products/$categorySlug/$productSlug": typeof ProductsCategorySlugProductSlugRoute
+  "/products/$categorySlug/": typeof ProductsCategorySlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -149,22 +166,24 @@ export interface FileRouteTypes {
     | "/products/$categorySlug"
     | "/services/$serviceSlug"
     | "/specializations/$slug"
+    | "/products/"
     | "/services/"
     | "/products/$categorySlug/$productSlug"
+    | "/products/$categorySlug/"
   fileRoutesByTo: FileRoutesByTo
   to:
     | "/"
     | "/about"
     | "/contact"
-    | "/products"
     | "/projects"
     | "/request-quote"
     | "/specializations"
-    | "/products/$categorySlug"
     | "/services/$serviceSlug"
     | "/specializations/$slug"
+    | "/products"
     | "/services"
     | "/products/$categorySlug/$productSlug"
+    | "/products/$categorySlug"
   id:
     | "__root__"
     | "/"
@@ -178,8 +197,10 @@ export interface FileRouteTypes {
     | "/products/$categorySlug"
     | "/services/$serviceSlug"
     | "/specializations/$slug"
+    | "/products/"
     | "/services/"
     | "/products/$categorySlug/$productSlug"
+    | "/products/$categorySlug/"
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -258,6 +279,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ServicesIndexRouteImport
       parentRoute: typeof ServicesRoute
     }
+    "/products/": {
+      id: "/products/"
+      path: "/"
+      fullPath: "/products/"
+      preLoaderRoute: typeof ProductsIndexRouteImport
+      parentRoute: typeof ProductsRoute
+    }
     "/specializations/$slug": {
       id: "/specializations/$slug"
       path: "/$slug"
@@ -279,6 +307,13 @@ declare module "@tanstack/react-router" {
       preLoaderRoute: typeof ProductsCategorySlugRouteImport
       parentRoute: typeof ProductsRoute
     }
+    "/products/$categorySlug/": {
+      id: "/products/$categorySlug/"
+      path: "/"
+      fullPath: "/products/$categorySlug/"
+      preLoaderRoute: typeof ProductsCategorySlugIndexRouteImport
+      parentRoute: typeof ProductsCategorySlugRoute
+    }
     "/products/$categorySlug/$productSlug": {
       id: "/products/$categorySlug/$productSlug"
       path: "/$productSlug"
@@ -291,10 +326,12 @@ declare module "@tanstack/react-router" {
 
 interface ProductsCategorySlugRouteChildren {
   ProductsCategorySlugProductSlugRoute: typeof ProductsCategorySlugProductSlugRoute
+  ProductsCategorySlugIndexRoute: typeof ProductsCategorySlugIndexRoute
 }
 
 const ProductsCategorySlugRouteChildren: ProductsCategorySlugRouteChildren = {
   ProductsCategorySlugProductSlugRoute: ProductsCategorySlugProductSlugRoute,
+  ProductsCategorySlugIndexRoute: ProductsCategorySlugIndexRoute,
 }
 
 const ProductsCategorySlugRouteWithChildren =
@@ -302,10 +339,12 @@ const ProductsCategorySlugRouteWithChildren =
 
 interface ProductsRouteChildren {
   ProductsCategorySlugRoute: typeof ProductsCategorySlugRouteWithChildren
+  ProductsIndexRoute: typeof ProductsIndexRoute
 }
 
 const ProductsRouteChildren: ProductsRouteChildren = {
   ProductsCategorySlugRoute: ProductsCategorySlugRouteWithChildren,
+  ProductsIndexRoute: ProductsIndexRoute,
 }
 
 const ProductsRouteWithChildren = ProductsRoute._addFileChildren(
