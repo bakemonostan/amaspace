@@ -10,11 +10,15 @@ import {
 
 export type ServiceSlug = "fire-safety-systems" | "hvac" | "electrical-engineering";
 
-type FireCard = {
+export type FireCard = {
   title: string;
   description: string;
   bullets: string[];
   icon: LucideIcon;
+  /** Short CTA shown on the card */
+  cta: string;
+  /** Where the whole card navigates */
+  linkTo: "/products" | "/request-quote";
 };
 
 type Certification = { abbr: string; name: string };
@@ -69,13 +73,15 @@ export const servicePages: Record<ServiceSlug, ServicePageConfig> = {
       {
         title: "Detection & alarm",
         description:
-          "Intelligent fire alarm and smoke detection networks with clear zoning, monitoring, and integration paths for voice evacuation where required.",
+          "Intelligent addressable fire alarm and smoke detection networks with clear zoning, monitoring, and integration paths for voice evacuation where required.",
         bullets: [
           "Smoke & heat detectors",
           "Aspirating systems (VESDA)",
           "Voice evacuation integration",
         ],
         icon: Bell,
+        cta: "Browse detection products",
+        linkTo: "/products",
       },
       {
         title: "Water-based suppression",
@@ -87,6 +93,8 @@ export const servicePages: Record<ServiceSlug, ServicePageConfig> = {
           "Fire pump rooms",
         ],
         icon: Droplets,
+        cta: "Discuss suppression scope",
+        linkTo: "/request-quote",
       },
       {
         title: "Gaseous & special hazard",
@@ -94,6 +102,8 @@ export const servicePages: Record<ServiceSlug, ServicePageConfig> = {
           "Clean-agent and special-hazard solutions for server rooms, archives, and mission-critical plant where water-based systems are unsuitable.",
         bullets: ["FM-200 & Novec 1230 systems", "Inergen systems", "Server room protection"],
         icon: CloudAlert,
+        cta: "Request special-hazard design",
+        linkTo: "/request-quote",
       },
       {
         title: "Maintenance & audits",
@@ -101,6 +111,8 @@ export const servicePages: Record<ServiceSlug, ServicePageConfig> = {
           "Scheduled testing, servicing, and compliance documentation so systems stay ready for inspection and real-world events.",
         bullets: ["Annual system certification", "Corrective maintenance", "Flow testing"],
         icon: ClipboardList,
+        cta: "Book maintenance / audit",
+        linkTo: "/request-quote",
       },
     ],
   },
