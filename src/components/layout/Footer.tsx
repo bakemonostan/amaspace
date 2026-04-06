@@ -26,62 +26,71 @@ const serviceLinks = [
 
 export function Footer() {
   return (
-    <footer className="bg-navy text-white">
-      <div className="container-site pb-14 pt-20 md:pb-16 md:pt-24">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+    <footer className='bg-navy text-white py-10 md:py-0'>
+      <div className='container-site pb-14 pt-20 md:pb-16 md:pt-24'>
+        <div className='grid gap-10 md:grid-cols-2 lg:grid-cols-4 lg:gap-8'>
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-md bg-white/10 font-heading text-lg font-bold text-white">
+            <div className='flex items-center gap-2.5'>
+              <span className='flex h-9 w-9 items-center justify-center rounded-md bg-white/10 font-heading text-lg font-bold text-white'>
                 A
               </span>
-              <span className="font-heading text-lg font-bold">Amaspace</span>
+              <span className='font-heading text-lg font-bold'>Amaspace</span>
             </div>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/70">
-              Credible, services-led building solutions for commercial and industrial facilities across Nigeria—MEP,
-              fire safety, security, and project delivery you can rely on.
+            <p className='mt-4 max-w-xs text-sm leading-relaxed text-white/70'>
+              Credible, services-led building solutions for commercial and
+              industrial facilities across Nigeria—MEP, fire safety, security,
+              and project delivery you can rely on.
             </p>
-            <div className="mt-5 flex gap-3 text-white/70">
+            <div className='mt-5 flex gap-3 text-white/70'>
               <a
-                href="https://www.linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded border border-white/20 p-2 hover:border-orange hover:text-orange"
-                aria-label="LinkedIn"
-              >
-                <LinkedinIcon className="h-4 w-4" />
+                href='https://www.linkedin.com'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='rounded border border-white/20 p-2 hover:border-orange hover:text-orange'
+                aria-label='LinkedIn'>
+                <LinkedinIcon className='h-4 w-4' />
               </a>
               <a
-                href="https://twitter.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded border border-white/20 p-2 hover:border-orange hover:text-orange"
-                aria-label="X (Twitter)"
-              >
-                <TwitterIcon className="h-4 w-4" />
+                href='https://twitter.com'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='rounded border border-white/20 p-2 hover:border-orange hover:text-orange'
+                aria-label='X (Twitter)'>
+                <TwitterIcon className='h-4 w-4' />
               </a>
             </div>
           </div>
 
           <div>
-            <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white/50">Company</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/80">
+            <p className='font-heading text-sm font-semibold uppercase tracking-wide text-white/50'>
+              Company
+            </p>
+            <ul className='mt-4 space-y-2.5 text-sm text-white/80'>
               <li>
-                <Link to="/" className="hover:text-orange">
+                <Link
+                  to='/'
+                  className='hover:text-orange'>
                   Home
                 </Link>
               </li>
               <li>
-                <Link to="/projects" className="hover:text-orange">
+                <Link
+                  to='/projects'
+                  className='hover:text-orange'>
                   Portfolio
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="hover:text-orange">
+                <Link
+                  to='/about'
+                  className='hover:text-orange'>
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="hover:text-orange">
+                <Link
+                  to='/contact'
+                  className='hover:text-orange'>
                   Careers
                 </Link>
               </li>
@@ -89,14 +98,23 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white/50">Services</p>
-            <ul className="mt-4 space-y-2.5 text-sm text-white/80">
+            <p className='font-heading text-sm font-semibold uppercase tracking-wide text-white/50'>
+              Services
+            </p>
+            <ul className='mt-4 space-y-2.5 text-sm text-white/80'>
               {serviceLinks.map((item) => (
-                <li key={item.label} className="flex items-center gap-2">
-                  {item.label === "Fire Safety" ? (
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-fire" aria-hidden />
+                <li
+                  key={item.label}
+                  className='flex items-center gap-2'>
+                  {item.label === 'Fire Safety' ? (
+                    <span
+                      className='h-1.5 w-1.5 shrink-0 rounded-full bg-fire'
+                      aria-hidden
+                    />
                   ) : null}
-                  <Link to={item.to} className="hover:text-orange">
+                  <Link
+                    to={item.to}
+                    className='hover:text-orange'>
                     {item.label}
                   </Link>
                 </li>
@@ -105,25 +123,40 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="font-heading text-sm font-semibold uppercase tracking-wide text-white/50">Contact</p>
-            <ul className="mt-4 space-y-4 text-sm text-white/80">
-              <li className="flex gap-3">
-                <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-orange" aria-hidden />
+            <p className='font-heading text-sm font-semibold uppercase tracking-wide text-white/50'>
+              Contact
+            </p>
+            <ul className='mt-4 space-y-4 text-sm text-white/80'>
+              <li className='flex gap-3'>
+                <MapPin
+                  className='mt-0.5 h-5 w-5 shrink-0 text-orange'
+                  aria-hidden
+                />
                 <span>
                   No. S2 Premier 1 Estate
                   <br />
                   Lekki-Epe Express, Lagos
                 </span>
               </li>
-              <li className="flex items-center gap-3">
-                <Phone className="h-5 w-5 shrink-0 text-orange" aria-hidden />
-                <a href="tel:+2348079813950" className="hover:text-orange">
+              <li className='flex items-center gap-3'>
+                <Phone
+                  className='h-5 w-5 shrink-0 text-orange'
+                  aria-hidden
+                />
+                <a
+                  href='tel:+2348079813950'
+                  className='hover:text-orange'>
                   +234 807 981 3950
                 </a>
               </li>
-              <li className="flex items-center gap-3">
-                <Mail className="h-5 w-5 shrink-0 text-orange" aria-hidden />
-                <a href="mailto:amaspaceproject@yahoo.com" className="hover:text-orange">
+              <li className='flex items-center gap-3'>
+                <Mail
+                  className='h-5 w-5 shrink-0 text-orange'
+                  aria-hidden
+                />
+                <a
+                  href='mailto:amaspaceproject@yahoo.com'
+                  className='hover:text-orange'>
                   amaspaceproject@yahoo.com
                 </a>
               </li>
@@ -131,14 +164,21 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/10 pt-8">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-xs text-white/50">© {new Date().getFullYear()} Amaspace Building Service Company. All rights reserved.</p>
-            <div className="flex flex-wrap gap-6 text-xs text-white/50">
-              <a href="#" className="hover:text-orange">
+        <div className='mt-12 border-t border-white/10 pt-8'>
+          <div className='flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between'>
+            <p className='text-xs text-white/50'>
+              © {new Date().getFullYear()} Amaspace Building Service Company.
+              All rights reserved.
+            </p>
+            <div className='flex flex-wrap gap-6 text-xs text-white/50'>
+              <a
+                href='#'
+                className='hover:text-orange'>
                 Privacy Policy
               </a>
-              <a href="#" className="hover:text-orange">
+              <a
+                href='#'
+                className='hover:text-orange'>
                 Terms of Service
               </a>
             </div>
