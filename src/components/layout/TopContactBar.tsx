@@ -16,35 +16,37 @@ function TwitterIcon({ className }: { className?: string }) {
 
 export function TopContactBar() {
   return (
-    <div className="bg-navy text-white">
-      <div className="container-site flex h-10 flex-wrap items-center justify-between gap-2 text-xs sm:text-sm">
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-white/90">
-          <a href="mailto:amaspaceproject@yahoo.com" className="hover:text-orange">
+    <div className='bg-navy text-white py-4'>
+      <div className='container-site flex h-10 flex-wrap items-center justify-between gap-2 text-xs sm:text-sm'>
+        <div className='flex flex-wrap items-center gap-x-4 gap-y-1 text-white/90'>
+          <a
+            href='mailto:amaspaceproject@yahoo.com'
+            className='hover:text-orange'>
             amaspaceproject@yahoo.com
           </a>
-          <span className="hidden sm:inline text-white/40">|</span>
-          <a href="tel:+2348079813950" className="hover:text-orange">
+          <span className='hidden sm:inline text-white/40'>|</span>
+          <a
+            href='tel:+2348079813950'
+            className='hover:text-orange'>
             +234 807 981 3950
           </a>
         </div>
-        <div className="flex items-center gap-3 text-white/80">
+        <div className='flex items-center gap-3 text-white/80'>
           <a
-            href="https://www.linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-orange"
-            aria-label="LinkedIn"
-          >
-            <LinkedinIcon className="h-4 w-4" />
+            href='https://www.linkedin.com'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:text-orange'
+            aria-label='LinkedIn'>
+            <LinkedinIcon className='h-4 w-4' />
           </a>
           <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-orange"
-            aria-label="X (Twitter)"
-          >
-            <TwitterIcon className="h-4 w-4" />
+            href='https://twitter.com'
+            target='_blank'
+            rel='noopener noreferrer'
+            className='hover:text-orange'
+            aria-label='X (Twitter)'>
+            <TwitterIcon className='h-4 w-4' />
           </a>
         </div>
       </div>
