@@ -1,6 +1,6 @@
 /**
- * Project summaries sourced from Amaspace Corporate Profile (Past / Present projects).
- * Imagery uses stock photos as placeholders until CMS assets exist.
+ * Legacy reference copy (corporate profile). The live site loads projects from Sanity (`project` documents).
+ * Use this list when creating entries in Studio if helpful.
  */
 export type PortfolioProject = {
   category: string;

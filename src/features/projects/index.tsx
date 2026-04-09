@@ -1,13 +1,16 @@
 import { Building2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
-import { portfolioProjects } from "@/features/projects/portfolio-data";
+import { sanityClient } from "@/lib/sanity/client";
+import { projectCoverUrl } from "@/lib/sanity/projectCoverUrl";
+import { allProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
 
-function ProjectCoverImage({ src, alt }: { src: string; alt: string }) {
+function ProjectCoverImage({ src, alt }: { src: string | null; alt: string }) {
   const [failed, setFailed] = useState(false);
 
-  if (failed) {
+  if (!src || failed) {
     return (
       <div className="flex h-full min-h-[140px] w-full flex-col items-center justify-center gap-2 bg-slate-200 text-slate-500">
         <Building2 className="h-10 w-10 shrink-0 opacity-45" aria-hidden />
@@ -27,7 +30,18 @@ function ProjectCoverImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+function projectCardAlt(p: SanityProjectCard): string {
+  const a = p.coverAlt?.trim();
+  if (a) return a;
+  return p.title;
+}
+
 export function ProjectsScreen() {
+  const { data, isPending, isError, error } = useQuery({
+    queryKey: ["sanity", "projects", "all"],
+    queryFn: () => sanityClient.fetch<SanityProjectCard[]>(allProjectsQuery),
+  });
+
   return (
     <Screen>
       <Seo
@@ -46,38 +60,59 @@ export function ProjectsScreen() {
 
       <section className="bg-[#f4f7fa] py-12 md:py-16">
         <div className="container-site">
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {portfolioProjects.map((project) => (
-              <article
-                key={project.title}
-                className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-slate-200">
-                  <ProjectCoverImage src={project.imageUrl} alt={project.imageAlt} />
-                  {project.status === "ongoing" ? (
-                    <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-navy shadow-sm">
-                      In progress
-                    </span>
-                  ) : null}
-                </div>
-                <div className="flex flex-1 flex-col p-5 md:p-6">
-                  <p className="text-[11px] font-bold uppercase tracking-wider text-blue">{project.category}</p>
-                  <h2 className="mt-2 font-heading text-lg font-bold text-navy md:text-xl">{project.title}</h2>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">{project.description}</p>
-                  <ul className="mt-4 flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <li
-                        key={tag}
-                        className="rounded-pill border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
-                      >
-                        {tag}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            ))}
-          </div>
+          {isPending ? (
+            <p className="text-center text-sm text-slate-600">Loading projects…</p>
+          ) : isError ? (
+            <p className="text-center text-sm text-red-700" role="alert">
+              Could not load projects.{error instanceof Error ? ` ${error.message}` : ""}
+            </p>
+          ) : !data?.length ? (
+            <p className="text-center text-sm text-slate-600">
+              No projects in the catalogue yet. Add <strong>Project</strong> documents in Sanity Studio.
+            </p>
+          ) : (
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {data.map((project) => {
+                const src = projectCoverUrl(project.cover);
+                const category = (project.category ?? "Project").trim() || "Project";
+                const tags = project.tags?.filter(Boolean) ?? [];
+                return (
+                  <article
+                    key={project._id}
+                    className="flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-slate-200">
+                      <ProjectCoverImage src={src} alt={projectCardAlt(project)} />
+                      {project.status === "ongoing" ? (
+                        <span className="absolute right-3 top-3 rounded-md bg-white/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-navy shadow-sm">
+                          In progress
+                        </span>
+                      ) : null}
+                    </div>
+                    <div className="flex flex-1 flex-col p-5 md:p-6">
+                      <p className="text-[11px] font-bold uppercase tracking-wider text-blue">{category}</p>
+                      <h2 className="mt-2 font-heading text-lg font-bold text-navy md:text-xl">{project.title}</h2>
+                      <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                        {project.description?.trim() || "—"}
+                      </p>
+                      {tags.length > 0 ? (
+                        <ul className="mt-4 flex flex-wrap gap-2">
+                          {tags.map((tag) => (
+                            <li
+                              key={tag}
+                              className="rounded-pill border border-slate-200 bg-slate-50 px-2.5 py-1 text-[11px] font-medium text-slate-600"
+                            >
+                              {tag}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
         </div>
       </section>
     </Screen>

@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -12,6 +13,9 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { sanityClient } from "@/lib/sanity/client";
+import { projectCoverUrl } from "@/lib/sanity/projectCoverUrl";
+import { featuredProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
 
 type TrustedPartner = {
   name: string;
@@ -55,11 +59,6 @@ const specImgA =
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80";
 const specImgB =
   "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80";
-const projectImgs = [
-  "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=800&q=80",
-  "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
-] as const;
 
 export function HeroSection() {
   return (
@@ -353,25 +352,20 @@ export function SpecializedSolutionsSection() {
   );
 }
 
-const featuredProjects = [
-  {
-    title: "Cornerstone Towers",
-    sub: "MEP services • Victoria Island, Lagos",
-    img: projectImgs[0],
-  },
-  {
-    title: "Gateway Mall Abuja",
-    sub: "Fire safety, security & external lighting",
-    img: projectImgs[1],
-  },
-  {
-    title: "Blu Atlantic Hotel",
-    sub: "MEP installation • Lagos",
-    img: projectImgs[2],
-  },
-] as const;
+function featuredCardAlt(p: SanityProjectCard): string {
+  const a = p.coverAlt?.trim();
+  if (a) return a;
+  return p.title;
+}
 
 export function FeaturedProjectsSection() {
+  const { data, isPending, isError } = useQuery({
+    queryKey: ["sanity", "projects", "featured"],
+    queryFn: () => sanityClient.fetch<SanityProjectCard[]>(featuredProjectsQuery),
+  });
+
+  const list = data ?? [];
+
   return (
     <section className="bg-[#f4f7fa] py-16 md:py-20">
       <div className="container-site">
@@ -391,28 +385,54 @@ export function FeaturedProjectsSection() {
           </Link>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">
-          {featuredProjects.map((p, i) => (
-            <motion.article
-              key={p.title}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card"
-            >
-              <img
-                src={p.img}
-                alt={p.title}
-                className="aspect-[4/3] w-full object-cover"
-                width={640}
-                height={480}
-              />
-              <div className="p-5">
-                <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
-                <p className="mt-1 text-sm text-slate-600">{p.sub}</p>
-              </div>
-            </motion.article>
-          ))}
+          {isPending ? (
+            <p className="col-span-full text-center text-sm text-slate-600 md:col-span-3">Loading featured projects…</p>
+          ) : isError ? (
+            <p className="col-span-full text-center text-sm text-slate-600 md:col-span-3">
+              Featured projects could not be loaded.
+            </p>
+          ) : list.length === 0 ? (
+            <p className="col-span-full text-center text-sm text-slate-600 md:col-span-3">
+              Mark up to three projects as <strong>featured</strong> in Sanity Studio to show them here.
+            </p>
+          ) : (
+            list.map((p, i) => {
+              const imgUrl = projectCoverUrl(p.cover);
+              const sub =
+                (typeof p.subtitle === "string" && p.subtitle.trim()) ||
+                p.description?.trim() ||
+                "";
+              return (
+                <motion.article
+                  key={p._id}
+                  initial={{ opacity: 0, y: 24 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-60px" }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card"
+                >
+                  {imgUrl ? (
+                    <img
+                      src={imgUrl}
+                      alt={featuredCardAlt(p)}
+                      className="aspect-[4/3] w-full object-cover"
+                      width={640}
+                      height={480}
+                    />
+                  ) : (
+                    <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 bg-slate-200 text-slate-500">
+                      <Building2 className="h-10 w-10 opacity-45" aria-hidden />
+                      <span className="text-[11px] font-medium">Image not set</span>
+                    </div>
+                  )}
+                  <div className="p-5">
+                    <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
+                    {sub ? <p className="mt-1 text-sm text-slate-600 line-clamp-2">{sub}</p> : null}
+                  </div>
+                </motion.article>
+              );
+            })
+          )}
         </div>
       </div>
     </section>
