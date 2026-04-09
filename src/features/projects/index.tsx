@@ -4,13 +4,13 @@ import { useState } from "react";
 import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
 import { sanityClient } from "@/lib/sanity/client";
-import { projectCoverUrl } from "@/lib/sanity/projectCoverUrl";
+import { projectCardImageSrc } from "@/lib/sanity/projectCoverUrl";
 import { allProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
 
-function ProjectCoverImage({ src, alt }: { src: string | null; alt: string }) {
+function ProjectCoverImage({ src, alt }: { src: string; alt: string }) {
   const [failed, setFailed] = useState(false);
 
-  if (!src || failed) {
+  if (failed) {
     return (
       <div className="flex h-full min-h-[140px] w-full flex-col items-center justify-center gap-2 bg-slate-200 text-slate-500">
         <Building2 className="h-10 w-10 shrink-0 opacity-45" aria-hidden />
@@ -73,7 +73,7 @@ export function ProjectsScreen() {
           ) : (
             <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {data.map((project) => {
-                const src = projectCoverUrl(project.cover);
+                const src = projectCardImageSrc(project.cover);
                 const category = (project.category ?? "Project").trim() || "Project";
                 const tags = project.tags?.filter(Boolean) ?? [];
                 return (

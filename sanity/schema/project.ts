@@ -76,12 +76,4 @@ export default defineType({
       initialValue: 100,
     }),
   ],
-  validation: (Rule) =>
-    Rule.custom((doc) => {
-      const d = doc as { coverImage?: unknown; images?: unknown[] } | undefined;
-      if (!d?.coverImage && (!d?.images || d.images.length === 0)) {
-        return "Add a cover image or at least one gallery image.";
-      }
-      return true;
-    }),
 });

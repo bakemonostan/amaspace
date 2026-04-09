@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { sanityClient } from "@/lib/sanity/client";
-import { projectCoverUrl } from "@/lib/sanity/projectCoverUrl";
+import { projectCardImageSrc } from "@/lib/sanity/projectCoverUrl";
 import { featuredProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
 
 type TrustedPartner = {
@@ -397,7 +397,7 @@ export function FeaturedProjectsSection() {
             </p>
           ) : (
             list.map((p, i) => {
-              const imgUrl = projectCoverUrl(p.cover);
+              const imgUrl = projectCardImageSrc(p.cover);
               const sub =
                 (typeof p.subtitle === "string" && p.subtitle.trim()) ||
                 p.description?.trim() ||
@@ -411,20 +411,13 @@ export function FeaturedProjectsSection() {
                   transition={{ duration: 0.5, delay: i * 0.1 }}
                   className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-card"
                 >
-                  {imgUrl ? (
-                    <img
-                      src={imgUrl}
-                      alt={featuredCardAlt(p)}
-                      className="aspect-[4/3] w-full object-cover"
-                      width={640}
-                      height={480}
-                    />
-                  ) : (
-                    <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 bg-slate-200 text-slate-500">
-                      <Building2 className="h-10 w-10 opacity-45" aria-hidden />
-                      <span className="text-[11px] font-medium">Image not set</span>
-                    </div>
-                  )}
+                  <img
+                    src={imgUrl}
+                    alt={featuredCardAlt(p)}
+                    className="aspect-[4/3] w-full object-cover"
+                    width={640}
+                    height={480}
+                  />
                   <div className="p-5">
                     <h3 className="font-heading text-lg font-bold text-navy">{p.title}</h3>
                     {sub ? <p className="mt-1 text-sm text-slate-600 line-clamp-2">{sub}</p> : null}
