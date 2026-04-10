@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { useSiteContact } from "@/hooks/useSiteContact";
+import { mailtoHref, telHref } from "@/lib/contactDefaults";
 
 function LinkedinIcon({ className }: { className?: string }) {
   return (
@@ -34,6 +36,8 @@ const serviceLinks = [
 ] as const;
 
 export function Footer() {
+  const { phoneDisplay, email, addressLine1, addressLine2 } = useSiteContact();
+
   return (
     <footer className='bg-navy text-white py-10 md:py-0'>
       <div className='container-site pb-14 pt-20 md:pb-16 md:pt-24'>
@@ -144,9 +148,9 @@ export function Footer() {
                   aria-hidden
                 />
                 <span>
-                  No. S2 Premier 1 Estate
+                  {addressLine1}
                   <br />
-                  Lekki-Epe Express, Lagos
+                  {addressLine2}
                 </span>
               </li>
               <li className='flex items-center gap-3'>
@@ -154,10 +158,8 @@ export function Footer() {
                   className='h-5 w-5 shrink-0 text-orange'
                   aria-hidden
                 />
-                <a
-                  href='tel:+2348079813950'
-                  className='hover:text-orange'>
-                  +234 807 981 3950
+                <a href={telHref(phoneDisplay)} className='hover:text-orange'>
+                  {phoneDisplay}
                 </a>
               </li>
               <li className='flex items-center gap-3'>
@@ -165,10 +167,8 @@ export function Footer() {
                   className='h-5 w-5 shrink-0 text-orange'
                   aria-hidden
                 />
-                <a
-                  href='mailto:amaspaceproject@yahoo.com'
-                  className='hover:text-orange'>
-                  amaspaceproject@yahoo.com
+                <a href={mailtoHref(email)} className='hover:text-orange'>
+                  {email}
                 </a>
               </li>
             </ul>

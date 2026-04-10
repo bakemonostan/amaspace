@@ -1,3 +1,6 @@
+import type { SiteContact } from "@/hooks/useSiteContact";
+import { DEFAULT_SITE_CONTACT, phoneToE164 } from "@/lib/contactDefaults";
+
 /**
  * Site-wide SEO copy aligned with Amaspace Corporate Profile (Nigeria, MEP, fire safety, ISO 9001).
  * Update VITE_SITE_URL in .env for accurate canonical & Open Graph URLs in production.
@@ -15,11 +18,12 @@ export const DEFAULT_KEYWORDS =
 
 export const SITE_LOCALE = "en_NG";
 
+/** Fallbacks only; prefer `useSiteContact()` in UI. */
 export const CONTACT = {
-  phoneDisplay: "+234 807 981 3950",
-  phoneE164: "+2348079813950",
-  email: "amaspaceproject@yahoo.com",
-  streetAddress: "No. S2 Premier 1 Estate",
+  phoneDisplay: DEFAULT_SITE_CONTACT.phoneDisplay,
+  phoneE164: phoneToE164(DEFAULT_SITE_CONTACT.phoneDisplay),
+  email: DEFAULT_SITE_CONTACT.email,
+  streetAddress: DEFAULT_SITE_CONTACT.addressLine1,
   addressLocality: "Lagos",
   addressRegion: "Lagos State",
   addressCountry: "NG",
@@ -39,22 +43,28 @@ export function absoluteUrl(path: string): string {
 }
 
 /** Organization structured data for JSON-LD (aligned with corporate profile). */
-export function getOrganizationJsonLd(): Record<string, unknown> {
+export function getOrganizationJsonLd(contact?: SiteContact): Record<string, unknown> {
   const url = siteOrigin();
+  const c = contact ?? {
+    phoneDisplay: DEFAULT_SITE_CONTACT.phoneDisplay,
+    email: DEFAULT_SITE_CONTACT.email,
+    addressLine1: DEFAULT_SITE_CONTACT.addressLine1,
+    addressLine2: DEFAULT_SITE_CONTACT.addressLine2,
+  };
   const org: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_LEGAL_NAME,
     alternateName: SITE_NAME,
     description: DEFAULT_DESCRIPTION,
-    email: CONTACT.email,
-    telephone: CONTACT.phoneE164,
+    email: c.email,
+    telephone: phoneToE164(c.phoneDisplay),
     address: {
       "@type": "PostalAddress",
-      streetAddress: CONTACT.streetAddress,
-      addressLocality: CONTACT.addressLocality,
-      addressRegion: CONTACT.addressRegion,
-      addressCountry: CONTACT.addressCountry,
+      streetAddress: [c.addressLine1, c.addressLine2].filter(Boolean).join(", "),
+      addressLocality: "Lagos",
+      addressRegion: "Lagos State",
+      addressCountry: "NG",
     },
     areaServed: { "@type": "Country", name: "Nigeria" },
     knowsAbout: [

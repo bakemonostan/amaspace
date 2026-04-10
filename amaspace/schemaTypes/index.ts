@@ -1,6 +1,7 @@
 import {defineField, defineType} from 'sanity'
-// Single source of truth: portfolio schema lives in repo `sanity/schema/` (used by the site + schema deploy).
+// Single source of truth: shared schemas in repo `sanity/schema/`.
 import project from '../../sanity/schema/project'
+import siteSettings from '../../sanity/schema/siteSettings'
 
 const productCategory = defineType({
   name: 'productCategory',
@@ -167,4 +168,4 @@ const product = defineType({
   ],
 })
 
-export const schemaTypes = [productCategory, product, project]
+export const schemaTypes = [productCategory, product, project, siteSettings]

@@ -2,14 +2,8 @@ import { useId, useState } from "react";
 import { ChevronDown, Clock, FileText, Mail, MapPin, Phone, Send } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { Screen } from "@/components/ui/Screen";
-
-const SITE = {
-  phoneDisplay: "+234 807 981 3950",
-  phoneHref: "tel:+2348079813950",
-  emailDisplay: "amaspaceproject@yahoo.com",
-  emailHref: "mailto:amaspaceproject@yahoo.com",
-  addressLines: ["No. S2 Premier 1 Estate", "Lekki-Epe Express, Lagos"],
-} as const;
+import { useSiteContact } from "@/hooks/useSiteContact";
+import { mailtoHref, telHref } from "@/lib/contactDefaults";
 
 const SERVICE_OPTIONS = [
   { value: "fire-safety-systems", label: "Fire safety systems" },
@@ -27,6 +21,7 @@ const labelClass = "mb-1.5 block text-sm font-semibold text-navy";
 export function RequestQuoteScreen() {
   const formId = useId();
   const [sent, setSent] = useState(false);
+  const { phoneDisplay, email, addressLine1, addressLine2 } = useSiteContact();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -79,22 +74,22 @@ export function RequestQuoteScreen() {
                 <ul className="space-y-5 text-sm">
                   <li className="flex items-start gap-3">
                     <Phone className="mt-0.5 h-5 w-5 shrink-0 text-orange" aria-hidden />
-                    <a href={SITE.phoneHref} className="text-white/90 hover:text-orange">
-                      {SITE.phoneDisplay}
+                    <a href={telHref(phoneDisplay)} className="text-white/90 hover:text-orange">
+                      {phoneDisplay}
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
                     <Mail className="mt-0.5 h-5 w-5 shrink-0 text-orange" aria-hidden />
-                    <a href={SITE.emailHref} className="break-all text-white/90 hover:text-orange">
-                      {SITE.emailDisplay}
+                    <a href={mailtoHref(email)} className="break-all text-white/90 hover:text-orange">
+                      {email}
                     </a>
                   </li>
                   <li className="flex items-start gap-3">
                     <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-orange" aria-hidden />
                     <span className="text-white/90">
-                      {SITE.addressLines[0]}
+                      {addressLine1}
                       <br />
-                      {SITE.addressLines[1]}
+                      {addressLine2}
                     </span>
                   </li>
                 </ul>

@@ -1,3 +1,6 @@
+import { useSiteContact } from "@/hooks/useSiteContact";
+import { mailtoHref, telHref } from "@/lib/contactDefaults";
+
 function LinkedinIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -15,20 +18,18 @@ function TwitterIcon({ className }: { className?: string }) {
 }
 
 export function TopContactBar() {
+  const { phoneDisplay, email } = useSiteContact();
+
   return (
     <div className='bg-navy text-white py-4'>
       <div className='container-site flex h-10 flex-wrap items-center justify-between gap-2 text-xs sm:text-sm'>
         <div className='flex flex-wrap items-center gap-x-4 gap-y-1 text-white/90'>
-          <a
-            href='mailto:amaspaceproject@yahoo.com'
-            className='hover:text-orange'>
-            amaspaceproject@yahoo.com
+          <a href={mailtoHref(email)} className='hover:text-orange'>
+            {email}
           </a>
           <span className='hidden sm:inline text-white/40'>|</span>
-          <a
-            href='tel:+2348079813950'
-            className='hover:text-orange'>
-            +234 807 981 3950
+          <a href={telHref(phoneDisplay)} className='hover:text-orange'>
+            {phoneDisplay}
           </a>
         </div>
         <div className='flex items-center gap-3 text-white/80'>

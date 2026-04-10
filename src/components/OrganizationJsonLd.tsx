@@ -1,20 +1,25 @@
 import { useEffect } from "react";
+import { useSiteContact } from "@/hooks/useSiteContact";
 import { getOrganizationJsonLd } from "@/lib/seo/config";
 
 const SCRIPT_ID = "amaspace-organization-jsonld";
 
 /**
- * Injects Organization schema.org JSON-LD once (corporate profile–aligned).
+ * Injects Organization schema.org JSON-LD (contact from Sanity when available).
  */
 export function OrganizationJsonLd() {
+  const contact = useSiteContact();
+
   useEffect(() => {
-    if (document.getElementById(SCRIPT_ID)) return;
-    const script = document.createElement("script");
-    script.id = SCRIPT_ID;
-    script.type = "application/ld+json";
-    script.textContent = JSON.stringify(getOrganizationJsonLd());
-    document.head.appendChild(script);
-  }, []);
+    let el = document.getElementById(SCRIPT_ID) as HTMLScriptElement | null;
+    if (!el) {
+      el = document.createElement("script");
+      el.id = SCRIPT_ID;
+      el.type = "application/ld+json";
+      document.head.appendChild(el);
+    }
+    el.textContent = JSON.stringify(getOrganizationJsonLd(contact));
+  }, [contact]);
 
   return null;
 }
