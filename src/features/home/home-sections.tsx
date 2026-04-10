@@ -1,5 +1,4 @@
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -7,16 +6,22 @@ import {
   Check,
   Droplets,
   Flame,
+  type LucideIcon,
   ShieldCheck,
   Wind,
   Wrench,
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { useHomePageSections } from "@/hooks/useHomePageSections";
 import { useHeroSection } from "@/hooks/useSiteContact";
-import { sanityClient } from "@/lib/sanity/client";
+import {
+  mergeFeaturedSectionMeta,
+  mergeSpecializedSection,
+  type MergedSpecSolution,
+} from "@/lib/homeSpecializedDefaults";
 import { projectCardImageSrc } from "@/lib/sanity/projectCoverUrl";
-import { featuredProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
+import type { SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
 
 type TrustedPartner = {
   name: string;
@@ -54,10 +59,22 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const specImgA =
-  "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80";
-const specImgB =
-  "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80";
+const SPEC_ICONS: Record<string, LucideIcon> = {
+  flame: Flame,
+  wind: Wind,
+  zap: Zap,
+};
+
+function SpecRowIcon({ name, isActive, accent }: { name: string; isActive: boolean; accent: "fire" | "blue" }) {
+  if (!name || name === "none") {
+    return <span className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />;
+  }
+  const Icon = SPEC_ICONS[name];
+  if (!Icon) return <span className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />;
+  const color =
+    isActive && accent === "fire" ? "text-fire" : isActive ? "text-slate-500" : "text-slate-400";
+  return <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${color}`} aria-hidden />;
+}
 
 export function HeroSection() {
   const hero = useHeroSection();
@@ -251,99 +268,89 @@ export function CoreCapabilitiesSection() {
   );
 }
 
-const specItems = [
-  {
-    id: "fire" as const,
-    title: "Fire safety systems",
-    desc: "Fire alarm & smoke detection, VESDA, foam, water mist, gas suppression, sprinklers, hydrants, hose reels, and portable extinguishers—designed, installed, tested, and maintained.",
-    cta: "Explore fire safety expertise",
-    to: "/services/$serviceSlug" as const,
-    params: { serviceSlug: "fire-safety-systems" as const },
-    activeBorder: "border-fire",
-    ctaClass: "text-fire",
-    showFlame: true,
-  },
-  {
-    id: "bms" as const,
-    title: "Building management systems (BMS)",
-    desc: "Extra-low voltage integration including BMS, access control, CCTV, fire detection, and UPS—compliant, dependable, and fully coordinated.",
-    cta: "View our services",
-    to: "/services" as const,
-    activeBorder: "border-navy",
-    ctaClass: "text-blue",
-    showFlame: false,
-  },
-] as const;
+function specBorderClass(item: MergedSpecSolution, isActive: boolean) {
+  if (!isActive) return "border-slate-200 bg-transparent hover:bg-slate-50/80";
+  return item.accent === "fire" ? "border-fire bg-slate-50" : "border-navy bg-slate-50";
+}
+
+function specCtaClass(item: MergedSpecSolution) {
+  return item.accent === "fire" ? "text-fire" : "text-blue";
+}
 
 export function SpecializedSolutionsSection() {
-  const [active, setActive] = useState<(typeof specItems)[number]["id"]>("fire");
+  const { data, isPending, isError } = useHomePageSections();
+  const merged = mergeSpecializedSection(data?.specialized ?? null);
+  const [pickedKey, setPickedKey] = useState<string | null>(null);
+  const keys = merged.solutions.map((s) => s.key);
+  const active =
+    pickedKey !== null && keys.includes(pickedKey) ? pickedKey : (merged.solutions[0]?.key ?? "");
 
   return (
     <section className="bg-white py-16 md:py-20">
       <div className="container-site grid gap-12 lg:grid-cols-2 lg:items-start">
         <div>
-          <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">Specialized solutions</h2>
-          <p className="mt-4 max-w-lg text-slate-600">
-            Critical infrastructure demands specialists. From fire life safety to intelligent building controls, we align
-            systems with codes, operations, and your long-term asset strategy.
-          </p>
-          <ul className="mt-10 space-y-0">
-            {specItems.map((item) => {
-              const isActive = active === item.id;
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => setActive(item.id)}
-                    className={`w-full border-l-4 py-5 pl-5 pr-3 text-left transition ${
-                      isActive
-                        ? `${item.activeBorder} bg-slate-50`
-                        : "border-slate-200 bg-transparent hover:bg-slate-50/80"
-                    }`}
-                  >
-                    <div className="flex items-start gap-3">
-                      {item.showFlame ? (
-                        <Flame className={`mt-0.5 h-5 w-5 shrink-0 ${isActive ? "text-fire" : "text-slate-400"}`} />
-                      ) : (
-                        <span className="mt-0.5 h-5 w-5 shrink-0" aria-hidden />
-                      )}
-                      <div>
-                        <p className="font-heading text-base font-bold text-navy">{item.title}</p>
-                        <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
-                        {isActive ? (
-                          "params" in item ? (
-                            <Link
-                              to={item.to}
-                              params={item.params}
-                              className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
-                            >
-                              {item.cta}
-                              <ArrowRight className="h-4 w-4" />
-                            </Link>
-                          ) : (
-                            <Link
-                              to={item.to}
-                              className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${item.ctaClass}`}
-                            >
-                              {item.cta}
-                              <ArrowRight className="h-4 w-4" />
-                            </Link>
-                          )
-                        ) : null}
-                      </div>
-                    </div>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+          {isPending ? (
+            <p className="text-sm text-slate-600">Loading section…</p>
+          ) : isError ? (
+            <p className="text-sm text-red-700" role="alert">
+              Could not load specialized solutions.
+            </p>
+          ) : (
+            <>
+              <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">{merged.sectionTitle}</h2>
+              <p className="mt-4 max-w-lg text-slate-600">{merged.sectionIntro}</p>
+              <ul className="mt-10 space-y-0">
+                {merged.solutions.map((item) => {
+                  const isActive = active === item.key;
+                  return (
+                    <li key={item.key}>
+                      <button
+                        type="button"
+                        onClick={() => setPickedKey(item.key)}
+                        className={`w-full border-l-4 py-5 pl-5 pr-3 text-left transition ${specBorderClass(item, isActive)}`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <SpecRowIcon name={item.icon} isActive={isActive} accent={item.accent} />
+                          <div>
+                            <p className="font-heading text-base font-bold text-navy">{item.title}</p>
+                            <p className="mt-2 text-sm leading-relaxed text-slate-600">{item.desc}</p>
+                            {isActive ? (
+                              <Link
+                                to={item.ctaPath}
+                                className={`mt-3 inline-flex items-center gap-1 text-sm font-semibold hover:underline ${specCtaClass(item)}`}
+                              >
+                                {item.cta}
+                                <ArrowRight className="h-4 w-4" />
+                              </Link>
+                            ) : null}
+                          </div>
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-card">
-            <img src={specImgA} alt="Commercial construction and building envelope work" className="aspect-[3/4] w-full object-cover" width={400} height={533} />
+            <img
+              src={merged.imageLeftUrl}
+              alt={merged.imageLeftAlt}
+              className="aspect-[3/4] w-full object-cover"
+              width={400}
+              height={533}
+            />
           </div>
           <div className="overflow-hidden rounded-2xl border border-slate-100 shadow-card">
-            <img src={specImgB} alt="Engineer reviewing technical drawings and plans" className="aspect-[3/4] w-full object-cover" width={400} height={533} />
+            <img
+              src={merged.imageRightUrl}
+              alt={merged.imageRightAlt}
+              className="aspect-[3/4] w-full object-cover"
+              width={400}
+              height={533}
+            />
           </div>
         </div>
       </div>
@@ -358,28 +365,23 @@ function featuredCardAlt(p: SanityProjectCard): string {
 }
 
 export function FeaturedProjectsSection() {
-  const { data, isPending, isError } = useQuery({
-    queryKey: ["sanity", "projects", "featured"],
-    queryFn: () => sanityClient.fetch<SanityProjectCard[]>(featuredProjectsQuery),
-  });
-
-  const list = data ?? [];
+  const { data, isPending, isError } = useHomePageSections();
+  const meta = mergeFeaturedSectionMeta(data?.featuredBlock ?? null);
+  const list = data?.featuredProjects ?? [];
 
   return (
     <section className="bg-[#f4f7fa] py-16 md:py-20">
       <div className="container-site">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">Featured projects</h2>
-            <p className="mt-3 max-w-xl text-slate-600">
-              A selection of completed and ongoing engineering and installation work drawn from our corporate portfolio.
-            </p>
+            <h2 className="font-heading text-3xl font-bold text-navy md:text-4xl">{meta.sectionTitle}</h2>
+            <p className="mt-3 max-w-xl text-slate-600">{meta.sectionSubtitle}</p>
           </div>
           <Link
-            to="/projects"
+            to={meta.ctaPath}
             className="inline-flex shrink-0 items-center gap-2 self-start rounded-lg border border-slate-300 bg-white px-5 py-2.5 text-sm font-semibold text-navy hover:border-navy md:self-auto"
           >
-            View full portfolio
+            {meta.ctaLabel}
             <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
@@ -392,7 +394,8 @@ export function FeaturedProjectsSection() {
             </p>
           ) : list.length === 0 ? (
             <p className="col-span-full text-center text-sm text-slate-600 md:col-span-3">
-              Mark up to three projects as <strong>featured</strong> in Sanity Studio to show them here.
+              Add up to three projects under <strong>Featured projects (home)</strong> in Studio, or mark projects as{" "}
+              <strong>featured</strong>.
             </p>
           ) : (
             list.map((p, i) => {

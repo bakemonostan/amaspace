@@ -1,4 +1,4 @@
-const projectCardFields = `
+export const projectCardFields = `
   _id,
   title,
   "slug": slug.current,

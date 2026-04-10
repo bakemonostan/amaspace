@@ -1,4 +1,6 @@
+import homeFeaturedProjects from "./homeFeaturedProjects";
 import homeHero from "./homeHero";
+import homeSpecializedSolutions from "./homeSpecializedSolutions";
 import product from "./product";
 import productCategory from "./productCategory";
 import project from "./project";
@@ -18,4 +20,6 @@ export const schemaTypes = [
   siteSettings,
   siteContact,
   homeHero,
+  homeSpecializedSolutions,
+  homeFeaturedProjects,
 ];
