@@ -1,6 +1,8 @@
 import {defineField, defineType} from 'sanity'
 // Single source of truth: shared schemas in repo `sanity/schema/`.
+import homeHero from '../../sanity/schema/homeHero'
 import project from '../../sanity/schema/project'
+import siteContact from '../../sanity/schema/siteContact'
 import siteSettings from '../../sanity/schema/siteSettings'
 
 const productCategory = defineType({
@@ -168,4 +170,4 @@ const product = defineType({
   ],
 })
 
-export const schemaTypes = [productCategory, product, project, siteSettings]
+export const schemaTypes = [productCategory, product, project, siteSettings, siteContact, homeHero]

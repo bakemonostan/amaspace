@@ -13,6 +13,7 @@ import {
   Zap,
 } from "lucide-react";
 import { useState } from "react";
+import { useHeroSection } from "@/hooks/useSiteContact";
 import { sanityClient } from "@/lib/sanity/client";
 import { projectCardImageSrc } from "@/lib/sanity/projectCoverUrl";
 import { featuredProjectsQuery, type SanityProjectCard } from "@/lib/sanity/queries/projects.queries";
@@ -53,29 +54,27 @@ const fadeUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
 };
 
-const heroImg =
-  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80";
 const specImgA =
   "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&w=600&q=80";
 const specImgB =
   "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=600&q=80";
 
 export function HeroSection() {
+  const hero = useHeroSection();
+
   return (
     <section className="bg-[#f4f7fa] pb-16 pt-12 md:pb-20 md:pt-16">
       <div className="container-site grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
         <motion.div initial="hidden" animate="visible" variants={{ visible: { transition: { staggerChildren: 0.1 } } }}>
           <motion.p variants={fadeUp} className="inline-flex items-center gap-2 rounded-pill border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-navy">
             <span className="h-1.5 w-1.5 rounded-full bg-blue" aria-hidden />
-            Engineering excellence
+            {hero.badge}
           </motion.p>
           <motion.h1 variants={fadeUp} className="mt-5 font-heading text-4xl font-extrabold leading-tight text-navy md:text-5xl">
-            Building services engineered for <span className="text-orange">reliability.</span>
+            {hero.headlineLead} <span className="text-orange">{hero.headlineHighlight}</span>
           </motion.h1>
           <motion.p variants={fadeUp} className="mt-5 max-w-xl text-base leading-relaxed text-slate-600">
-            Amaspace is a fast-growing Nigerian building services firm—delivering mechanical, electrical, plumbing, fire
-            safety, and security solutions with cutting-edge technology, strict quality standards, and a proven track
-            record on commercial and industrial projects.
+            {hero.subtext}
           </motion.p>
           <motion.div variants={fadeUp} className="mt-8 flex flex-wrap gap-3">
             <Link
@@ -100,8 +99,8 @@ export function HeroSection() {
         >
           <div className="overflow-hidden rounded-3xl shadow-card">
             <img
-              src={heroImg}
-              alt="Construction site with workers and building infrastructure"
+              src={hero.imageUrl}
+              alt={hero.imageAlt}
               className="aspect-[4/5] w-full object-cover md:aspect-[3/4]"
               width={720}
               height={900}

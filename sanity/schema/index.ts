@@ -1,10 +1,12 @@
+import homeHero from "./homeHero";
 import product from "./product";
 import productCategory from "./productCategory";
 import project from "./project";
 import service from "./service";
+import siteContact from "./siteContact";
+import siteSettings from "./siteSettings";
 import specialization from "./specialization";
 import teamMember from "./teamMember";
-import siteSettings from "./siteSettings";
 
 export const schemaTypes = [
   product,
@@ -14,4 +16,6 @@ export const schemaTypes = [
   specialization,
   teamMember,
   siteSettings,
+  siteContact,
+  homeHero,
 ];

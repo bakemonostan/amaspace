@@ -1,8 +1,14 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { DEFAULT_SITE_CONTACT } from "@/lib/contactDefaults";
+import { DEFAULT_HERO_TEXT, resolveHeroImageUrl } from "@/lib/homeHeroDefaults";
 import { sanityClient } from "@/lib/sanity/client";
-import { siteSettingsContactQuery, type SiteSettingsContact } from "@/lib/sanity/queries/siteSettings.queries";
+import {
+  singletonPageQuery,
+  type HomeHeroDoc,
+  type SiteContactDoc,
+  type SingletonPageData,
+} from "@/lib/sanity/queries/siteSettings.queries";
 
 export type SiteContact = {
   phoneDisplay: string;
@@ -11,7 +17,16 @@ export type SiteContact = {
   addressLine2: string;
 };
 
-function mergeContact(raw: SiteSettingsContact | null | undefined): SiteContact {
+export type HeroSectionContent = {
+  badge: string;
+  headlineLead: string;
+  headlineHighlight: string;
+  subtext: string;
+  imageUrl: string;
+  imageAlt: string;
+};
+
+function mergeContact(raw: SiteContactDoc | null | undefined): SiteContact {
   const d = DEFAULT_SITE_CONTACT;
   return {
     phoneDisplay: raw?.phone?.trim() || d.phoneDisplay,
@@ -21,11 +36,32 @@ function mergeContact(raw: SiteSettingsContact | null | undefined): SiteContact 
   };
 }
 
-export function useSiteContact(): SiteContact {
-  const { data } = useQuery({
-    queryKey: ["sanity", "siteSettings", "contact"],
-    queryFn: () => sanityClient.fetch<SiteSettingsContact | null>(siteSettingsContactQuery),
+function mergeHero(raw: HomeHeroDoc | null | undefined): HeroSectionContent {
+  const d = DEFAULT_HERO_TEXT;
+  return {
+    badge: raw?.eyebrow?.trim() || d.badge,
+    headlineLead: raw?.titleLead?.trim() || d.headlineLead,
+    headlineHighlight: raw?.titleHighlight?.trim() || d.headlineHighlight,
+    subtext: raw?.intro?.trim() || d.subtext,
+    imageUrl: resolveHeroImageUrl(raw?.image, raw?.placeholderImageUrl),
+    imageAlt: raw?.imageAlt?.trim() || d.imageAlt,
+  };
+}
+
+function useSingletonPageData() {
+  return useQuery({
+    queryKey: ["sanity", "singletons", "homePage"],
+    queryFn: () => sanityClient.fetch<SingletonPageData>(singletonPageQuery),
     staleTime: 5 * 60 * 1000,
   });
-  return useMemo(() => mergeContact(data), [data]);
+}
+
+export function useSiteContact(): SiteContact {
+  const { data } = useSingletonPageData();
+  return useMemo(() => mergeContact(data?.contact), [data?.contact]);
+}
+
+export function useHeroSection(): HeroSectionContent {
+  const { data } = useSingletonPageData();
+  return useMemo(() => mergeHero(data?.hero), [data?.hero]);
 }
