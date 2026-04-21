@@ -145,7 +145,7 @@ export function ProductsScreen() {
   const highlightCards = useMemo(() => {
     const majorList = majors.data ?? [];
     if (majorList.length > 0) {
-      return majorList.slice(0, 3).map((m) => ({
+      return majorList.map((m) => ({
         _id: m._id,
         title: m.title,
         description: m.description,
@@ -154,7 +154,7 @@ export function ProductsScreen() {
       }));
     }
     const subs = [...(subCategories.data ?? [])].sort((a, b) => b.productCount - a.productCount);
-    return subs.slice(0, 3).map((s) => ({
+    return subs.map((s) => ({
       _id: s._id,
       title: s.title,
       description: s.description,
