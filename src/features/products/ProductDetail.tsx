@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Seo } from "@/components/Seo";
+import { HorizontalDragCarousel, HorizontalDragCarouselSlide } from "@/components/ui/HorizontalDragCarousel";
 import { Screen } from "@/components/ui/Screen";
 import { sanityClient } from "@/lib/sanity/client";
 import { productBySlugQuery } from "@/lib/sanity/queries/products.queries";
@@ -657,52 +658,57 @@ function ProductDetailBody({ product, categorySlug, productSlug }: BodyProps) {
               title="Similar protective systems"
               sub="Curated in Sanity—or auto-suggested from the same sub-category."
             />
-            <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <HorizontalDragCarousel
+              aria-label="Similar products"
+              className="mt-12 -mx-4 px-4 md:-mx-6 md:px-6"
+            >
               {related.map((p, i) => {
                 const thumb = p.imageUrl?.trim() ?? placeholderImage(p._id);
                 const code = p.productCode?.trim();
                 return (
-                  <motion.article
-                    key={p._id}
-                    initial={{ opacity: 0, y: 12 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true, margin: "-24px" }}
-                    transition={{ duration: 0.35, delay: i * 0.04 }}
-                    className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition hover:border-orange/25 hover:shadow-card-hover"
-                  >
-                    <div className="relative aspect-[5/3] overflow-hidden bg-slate-100">
-                      <img
-                        src={thumb}
-                        alt={p.title}
-                        className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                      />
-                      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent opacity-80" />
-                      {code ? (
-                        <span className="absolute bottom-3 left-3 rounded-md bg-white/95 px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-orange shadow-sm">
-                          {code}
-                        </span>
-                      ) : null}
-                    </div>
-                    <div className="flex flex-1 flex-col p-5">
-                      <h3 className="font-heading text-base font-bold text-navy group-hover:text-blue">{p.title}</h3>
-                      {p.shortDescription?.trim() ? (
-                        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">
-                          {p.shortDescription.trim()}
-                        </p>
-                      ) : null}
-                      <Link
-                        to="/products/$categorySlug/$productSlug"
-                        params={{ categorySlug: p.categorySlug!, productSlug: p.slug }}
-                        className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-blue hover:underline"
-                      >
-                        View details
-                        <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
-                      </Link>
-                    </div>
-                  </motion.article>
+                  <HorizontalDragCarouselSlide key={p._id}>
+                    <motion.article
+                      initial={{ opacity: 0, y: 12 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-24px" }}
+                      transition={{ duration: 0.35, delay: i * 0.04 }}
+                      className="group flex h-full cursor-grab flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition group-data-[grabbing=true]/carousel:cursor-grabbing hover:border-orange/25 hover:shadow-card-hover"
+                    >
+                      <div className="relative aspect-[5/3] overflow-hidden bg-slate-100">
+                        <img
+                          src={thumb}
+                          alt={p.title}
+                          className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                          draggable={false}
+                        />
+                        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy/50 via-transparent to-transparent opacity-80" />
+                        {code ? (
+                          <span className="absolute bottom-3 left-3 rounded-md bg-white/95 px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-orange shadow-sm">
+                            {code}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="flex flex-1 flex-col p-5">
+                        <h3 className="font-heading text-base font-bold text-navy group-hover:text-blue">{p.title}</h3>
+                        {p.shortDescription?.trim() ? (
+                          <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-slate-600">
+                            {p.shortDescription.trim()}
+                          </p>
+                        ) : null}
+                        <Link
+                          to="/products/$categorySlug/$productSlug"
+                          params={{ categorySlug: p.categorySlug!, productSlug: p.slug }}
+                          className="mt-4 inline-flex items-center gap-1 text-sm font-bold text-blue hover:underline"
+                        >
+                          View details
+                          <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" aria-hidden />
+                        </Link>
+                      </div>
+                    </motion.article>
+                  </HorizontalDragCarouselSlide>
                 );
               })}
-            </div>
+            </HorizontalDragCarousel>
           </div>
         </section>
       ) : null}

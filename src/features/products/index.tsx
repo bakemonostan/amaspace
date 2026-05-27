@@ -5,6 +5,8 @@ import type { LucideIcon } from "lucide-react";
 import {
   Bell,
   Box,
+  ChevronLeft,
+  ChevronRight,
   Cpu,
   Cylinder,
   Droplets,
@@ -15,8 +17,9 @@ import {
   Shield,
   Zap,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Seo } from "@/components/Seo";
+import { HorizontalDragCarousel, HorizontalDragCarouselSlide } from "@/components/ui/HorizontalDragCarousel";
 import { Screen } from "@/components/ui/Screen";
 import { BasicPage } from "@/features/common/BasicPage";
 import { ProductDetail } from "@/features/products/ProductDetail";
@@ -66,6 +69,29 @@ const subCategoriesQuery = `
   "productCount": count(*[_type == "product" && references(^._id)])
 }
 `;
+
+const PRODUCTS_PAGE_SIZE_MOBILE = 4;
+const PRODUCTS_PAGE_SIZE_DESKTOP = 9;
+const PRODUCTS_MOBILE_MQ = "(max-width: 767px)";
+
+function useProductsPageSize() {
+  const getSize = () =>
+    typeof window !== "undefined" && window.matchMedia(PRODUCTS_MOBILE_MQ).matches
+      ? PRODUCTS_PAGE_SIZE_MOBILE
+      : PRODUCTS_PAGE_SIZE_DESKTOP;
+
+  const [pageSize, setPageSize] = useState(getSize);
+
+  useEffect(() => {
+    const mq = window.matchMedia(PRODUCTS_MOBILE_MQ);
+    const sync = () => setPageSize(mq.matches ? PRODUCTS_PAGE_SIZE_MOBILE : PRODUCTS_PAGE_SIZE_DESKTOP);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+
+  return pageSize;
+}
 
 const productsQuery = `
 *[_type == "product"] | order(title asc) {
@@ -123,9 +149,69 @@ function getProductImage(image: unknown): string | null {
   return null;
 }
 
+function ProductsPagination({
+  page,
+  pageSize,
+  totalPages,
+  totalItems,
+  onPageChange,
+}: {
+  page: number;
+  pageSize: number;
+  totalPages: number;
+  totalItems: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalItems <= pageSize) return null;
+
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, totalItems);
+
+  return (
+    <nav
+      className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-between"
+      aria-label="Products pagination"
+    >
+      <p className="text-sm text-slate-600">
+        Showing <span className="font-semibold text-navy">{start}</span>–
+        <span className="font-semibold text-navy">{end}</span> of{" "}
+        <span className="font-semibold text-navy">{totalItems}</span>
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          disabled={page <= 1}
+          onClick={() => onPageChange(page - 1)}
+          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Previous page"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden />
+          Previous
+        </button>
+        <span className="min-w-[5.5rem] text-center text-sm font-medium text-slate-600">
+          Page {page} of {totalPages}
+        </span>
+        <button
+          type="button"
+          disabled={page >= totalPages}
+          onClick={() => onPageChange(page + 1)}
+          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 disabled:cursor-not-allowed disabled:opacity-40"
+          aria-label="Next page"
+        >
+          Next
+          <ChevronRight className="h-4 w-4" aria-hidden />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
 export function ProductsScreen() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const productListAnchorRef = useRef<HTMLDivElement>(null);
+  const pageSize = useProductsPageSize();
 
   const majors = useQuery({
     queryKey: ["product-major-categories"],
@@ -185,6 +271,31 @@ export function ProductsScreen() {
     });
   }, [products.data, activeCategory, searchTerm]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, activeCategory]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+  const page = Math.min(currentPage, totalPages);
+
+  const paginatedProducts = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return filteredProducts.slice(start, start + pageSize);
+  }, [filteredProducts, page, pageSize]);
+
+  const scrollToProductList = () => {
+    productListAnchorRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handlePageChange = (nextPage: number) => {
+    setCurrentPage(nextPage);
+    requestAnimationFrame(scrollToProductList);
+  };
+
   const loading = majors.isLoading || subCategories.isLoading || products.isLoading;
   const error = majors.isError || subCategories.isError || products.isError;
 
@@ -234,35 +345,39 @@ export function ProductsScreen() {
 
       <section className="bg-[#f4f7fa] pb-14 pt-0 md:pb-20">
         <div className="container-site relative z-10 -mt-14 md:-mt-16">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          <HorizontalDragCarousel
+            aria-label="Product categories"
+            className="-mx-4 px-4 md:-mx-6 md:px-6"
+          >
             {highlightCards.map((card, index) => {
               const Icon = categoryIconFromSanity(card.icon);
               return (
-                <motion.div
-                  key={card._id}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
-                  whileHover={{ y: -5 }}
-                  className="group cursor-default rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card transition-[border-color,box-shadow] duration-300 hover:border-blue hover:shadow-lg md:p-7"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors duration-300 group-hover:border-blue/45 group-hover:text-blue">
-                    <Icon className="h-5 w-5 transition-colors duration-300" aria-hidden />
-                  </div>
-                  <h2 className="mt-4 font-heading text-sm font-extrabold uppercase leading-snug tracking-wide text-navy transition-colors duration-300 group-hover:text-navy md:text-base">
-                    {card.title}
-                  </h2>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3">
-                    {card.description?.trim() ||
-                      "Engineered products and systems for demanding building environments, with documentation and support from our team."}
-                  </p>
-                  <p className="mt-5 inline-flex rounded-pill border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-xs font-medium text-slate-600 transition-colors duration-300 group-hover:border-blue/25 group-hover:bg-blue-light/40">
-                    {card.productCount} {card.productCount === 1 ? "product" : "products"}
-                  </p>
-                </motion.div>
+                <HorizontalDragCarouselSlide key={card._id}>
+                  <motion.div
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35, delay: index * 0.06, ease: "easeOut" }}
+                    whileHover={{ y: -5 }}
+                    className="group h-full cursor-grab rounded-2xl border border-slate-200/90 bg-white p-6 shadow-card transition-[border-color,box-shadow] duration-300 group-data-[grabbing=true]/carousel:cursor-grabbing hover:border-blue hover:shadow-lg md:p-7"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-lg border border-slate-200 text-slate-500 transition-colors duration-300 group-hover:border-blue/45 group-hover:text-blue">
+                      <Icon className="h-5 w-5 transition-colors duration-300" aria-hidden />
+                    </div>
+                    <h2 className="mt-4 font-heading text-sm font-extrabold uppercase leading-snug tracking-wide text-navy transition-colors duration-300 group-hover:text-navy md:text-base">
+                      {card.title}
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600 line-clamp-3">
+                      {card.description?.trim() ||
+                        "Engineered products and systems for demanding building environments, with documentation and support from our team."}
+                    </p>
+                    <p className="mt-5 inline-flex rounded-pill border border-slate-200 bg-slate-50 px-3 py-1 font-mono text-xs font-medium text-slate-600 transition-colors duration-300 group-hover:border-blue/25 group-hover:bg-blue-light/40">
+                      {card.productCount} {card.productCount === 1 ? "product" : "products"}
+                    </p>
+                  </motion.div>
+                </HorizontalDragCarouselSlide>
               );
             })}
-          </div>
+          </HorizontalDragCarousel>
 
           <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-relaxed text-slate-600 md:mt-12 md:text-base">
             Discover reliable control and fire safety products tailored for industrial and commercial projects.
@@ -353,8 +468,15 @@ export function ProductsScreen() {
 
           {!loading && !error ? (
             filteredProducts.length > 0 ? (
+              <>
+              <div
+                ref={productListAnchorRef}
+                id="products-list"
+                className="scroll-mt-24 md:scroll-mt-28"
+                aria-hidden
+              />
               <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredProducts.map((product) => {
+                {paginatedProducts.map((product) => {
                   const imgUrl = getProductImage(product.image);
                   const badgeLabel = (product.category?.title ?? "Product").toUpperCase();
                   const badgeClass = categoryBadgeClass(product.category?.color);
@@ -416,6 +538,14 @@ export function ProductsScreen() {
                   );
                 })}
               </div>
+              <ProductsPagination
+                page={page}
+                pageSize={pageSize}
+                totalPages={totalPages}
+                totalItems={filteredProducts.length}
+                onPageChange={handlePageChange}
+              />
+              </>
             ) : (
               <div className="mt-8 rounded-xl border border-slate-200 bg-white p-10 text-center shadow-sm">
                 <p className="font-heading font-bold text-navy">No products match your filters</p>
